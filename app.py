@@ -4,6 +4,7 @@ import os
 import tempfile 
 import requests
 from dotenv import load_dotenv
+from functools import wraps
 
 # Load environment variables
 load_dotenv()
@@ -18,23 +19,41 @@ DISCORD_REDIRECT_URI = os.getenv('DISCORD_REDIRECT_URI')
 DISCORD_API_BASE_URL = 'https://discord.com/api/v10'
 DISCORD_OAUTH_URL = f'https://discord.com/api/oauth2/authorize?client_id={DISCORD_CLIENT_ID}&redirect_uri={DISCORD_REDIRECT_URI}&response_type=code&scope=identify'
 
+# Decorator to require login
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user' not in session:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+# Redirect to dashboard if already logged in
+def redirect_if_logged_in(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user' in session:
+            return redirect(url_for('dashboard'))
+        return f(*args, **kwargs)
+    return decorated_function
+
 @app.route('/')
+@redirect_if_logged_in
 def home():
-    # If user is logged in, redirect to dashboard
-    if 'user' in session:
-        return redirect(url_for('dashboard'))
-    # Otherwise, show the main IDE page
-    return render_template('index.html')
+    return render_template('login.html')
 
 @app.route('/login')
+@redirect_if_logged_in
 def login():
     return render_template('login.html')
 
 @app.route('/discord-login')
+@redirect_if_logged_in
 def discord_login():
     return redirect(DISCORD_OAUTH_URL)
 
 @app.route('/callback')
+@redirect_if_logged_in
 def callback():
     # Get the authorization code from the request
     code = request.args.get('code')
@@ -77,24 +96,23 @@ def callback():
     return redirect(url_for('dashboard'))
 
 @app.route('/dashboard')
+@login_required
 def dashboard():
-    # Check if user is logged in
-    if 'user' not in session:
-        return redirect(url_for('login'))
-    
     return render_template('dashboard.html', user=session['user'])
+
+@app.route('/ide')
+@login_required
+def ide():
+    return render_template('index.html')
 
 @app.route('/logout')
 def logout():
     session.pop('user', None)
-    return redirect(url_for('home'))
+    return redirect(url_for('login'))
 
 @app.route('/execute',methods=['POST','GET'])
+@login_required
 def code_editor():
-    # Check if user is logged in to use the editor
-    if 'user' not in session:
-        return redirect(url_for('login'))
-    
     language = request.form.get('language')
     code = request.form.get('code')
     
