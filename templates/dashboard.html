@@ -91,6 +91,15 @@
             transform: translateY(-1px);
         }
         
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
         .container {
             max-width: 1200px;
             margin: 30px auto;
@@ -223,10 +232,131 @@
             transform: translateY(0);
         }
         
+        /* Mobile Navigation */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .mobile-nav.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .mobile-nav-content {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 80%;
+            height: 100%;
+            background: white;
+            padding: 20px;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+        
+        .mobile-nav.active .mobile-nav-content {
+            transform: translateX(0);
+        }
+        
+        .close-mobile-nav {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #333;
+            float: right;
+            margin-bottom: 20px;
+        }
+        
+        .mobile-nav-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .mobile-nav-links li {
+            margin-bottom: 15px;
+        }
+        
+        .mobile-nav-links a {
+            display: block;
+            padding: 15px;
+            text-decoration: none;
+            color: #333;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 1.1rem;
+            transition: background-color 0.3s ease;
+        }
+        
+        .mobile-nav-links a:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .mobile-nav-links a.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .mobile-user-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 30px;
+            text-align: center;
+        }
+        
+        .mobile-user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #3498db, #9b59b6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.5rem;
+            margin: 0 auto 15px;
+        }
+        
+        .mobile-username {
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+        
+        .mobile-user-tag {
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .mobile-logout-btn {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            width: 100%;
+            font-size: 1rem;
+        }
+        
         /* Responsive Design */
         @media (max-width: 768px) {
             .header {
-                flex-direction: column;
+                flex-direction: row;
                 gap: 15px;
                 padding: 15px;
             }
@@ -236,8 +366,11 @@
             }
             
             .user-info {
-                width: 100%;
-                justify-content: space-between;
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
             }
             
             .container {
@@ -265,30 +398,11 @@
         
         @media (max-width: 480px) {
             .header {
-                padding: 10px;
+                padding: 10px 15px;
             }
             
             .logo {
                 font-size: 1.3rem;
-            }
-            
-            .user-avatar {
-                width: 40px;
-                height: 40px;
-                font-size: 1rem;
-            }
-            
-            .username {
-                font-size: 1rem;
-            }
-            
-            .user-tag {
-                font-size: 0.75rem;
-            }
-            
-            .logout-btn {
-                padding: 6px 12px;
-                font-size: 0.9rem;
             }
             
             .welcome {
@@ -327,6 +441,7 @@
             </div>
             <button class="logout-btn" onclick="location.href='/logout'">Logout</button>
         </div>
+        <button class="mobile-menu-btn" onclick="toggleMobileNav()">☰</button>
     </div>
     
     <div class="container">
@@ -365,5 +480,43 @@
             </div>
         </div>
     </div>
+    
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav" id="mobileNav">
+        <div class="mobile-nav-content">
+            <button class="close-mobile-nav" onclick="toggleMobileNav()">×</button>
+            <ul class="mobile-nav-links">
+                <li><a href="/dashboard" class="active">Dashboard</a></li>
+                <li><a href="/settings">Settings</a></li>
+            </ul>
+            
+            <div class="mobile-user-info">
+                <div class="mobile-user-avatar">{{ user.username[0].upper() }}</div>
+                <div class="mobile-username">{{ user.username }}</div>
+                <div class="mobile-user-tag">#{{ user.discriminator }}</div>
+                <button class="mobile-logout-btn" onclick="location.href='/logout'">Logout</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function toggleMobileNav() {
+            const mobileNav = document.getElementById('mobileNav');
+            mobileNav.classList.toggle('active');
+            
+            // Prevent body scroll when mobile nav is open
+            document.body.style.overflow = mobileNav.classList.contains('active') ? 'hidden' : 'auto';
+        }
+        
+        // Close mobile nav when clicking outside
+        document.addEventListener('click', function(event) {
+            const mobileNav = document.getElementById('mobileNav');
+            if (mobileNav.classList.contains('active') && 
+                !mobileNav.contains(event.target) && 
+                !event.target.closest('.mobile-menu-btn')) {
+                toggleMobileNav();
+            }
+        });
+    </script>
 </body>
 </html>
