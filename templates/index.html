@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InternIQ Online IDE</title>
+    <!-- Ensure the path to the CSS file is correct -->
+<link rel="stylesheet" href="static/css/style.css">
+<script src="static/js/lib/ace.js"></script>
+<script src="static/js/lib/theme-monokai.js"></script>
+<script src="static/js/ide.js"></script>
+
+<!-- Ace Editor Core -->
+<!-- Language Modes -->
+<script src="static/js/lib/mode-c_cpp.js"></script>
+<script src="static/js/lib/mode-python.js"></script>
+<script src="static/js/lib/mode-javascript.js"></script>
+<script src="static/js/lib/mode-php.js"></script>
+
+<!-- Extensions -->
+<script src="static/js/lib/ext-language_tools.js"></script>
+
+<!-- Snippets -->
+<script src="static/js/lib/snippets/javascript.js"></script>
+<script src="static/js/lib/snippets/python.js"></script>
+<script src="static/js/lib/snippets/c_cpp.js"></script>
+<script src="static/js/lib/snippets/php.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Custom Snippets (if any) -->
+<script src="static/js/lib/your_custom_snippets.js"></script>
+</head>
+<body>
+    <div class="header">InternIQ Online IDE</div>
+    <div class="container">
+        <div class="switch-buttons">
+            <button class="btn switch-btn" onclick="showInput()">Input</button>
+            <button class="btn switch-btn" onclick="showOutput()">Output</button>
+        </div>
+        <div class="input-output-wrapper">
+            <div id="input-section" class="input-section">
+                <div class="control-panel">
+                    Select Language:
+                    &nbsp; &nbsp;
+                    <select id="languages" class="languages">
+                        <option value="python">Python</option>
+
+                    </select>
+                </div>
+                <div class="editor" id="editor"></div>
+                <div class="button-container">
+                    <button class="btn" onclick="executeCode()">Run</button>
+                </div>
+            </div>
+            <div id="output-section" class="output-section" style="display: none;">
+                <h2 class="output-header">Output:</h2>
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading...</p>
+                </div>
+                <div class="output"></div>
+            </div>
+        </div>
+    </div>
+
+        <script>
+        function showInput() {
+            $('#input-section').show();
+            $('#output-section').hide();
+        }
+
+        function showOutput() {
+            $('#input-section').hide();
+            $('#output-section').show();
+        }
+
+        function executeCode() {
+            $('#input-section').hide();
+            $('.loading').show(); // Show the spinner
+            $('.output').hide();  // Hide the output section initially
+            
+            $.ajax({
+                url: "/execute",
+                method: "POST",
+                data: {
+                    language: $("#languages").val(),
+                    code: editor.getSession().getValue()
+                },
+                success: function(response) {
+                    $('.loading').hide(); // Hide the spinner after receiving the response
+                    $('.output').text(response.output).show(); // Show the output
+                    showOutput(); // Display the output section
+                },
+                error: function() {
+                    $('.loading').hide(); // Hide the spinner in case of an error
+                    $('.output').text("An error occurred while executing the code.").show(); // Display error message
+                    showOutput(); // Display the output section
+                }
+            });
+        }
+    </script>
+
+    <style>
+        /* General Body Styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;    
+            background-color: #f4f4f9;
+        }
+
+        /* Header Styling */
+        .header {
+            background-color: #3498db;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        /* Switch Buttons Styling */
+        .switch-buttons {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0;
+        }
+
+        .switch-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin: 0 5px;
+        }
+
+        .switch-btn:hover {
+            background-color: #2980b9;
+        }
+
+        /* Container for Layout */
+        .input-output-wrapper {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Input Section */
+        .input-section {
+            background-color: #ffffff;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Control Panel Styling */
+        .control-panel {
+            margin-bottom: 15px;
+        }
+
+        .control-panel select {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        /* Editor Styling */
+        .editor {
+            background-color: #2e2e2e;
+            color: #f8f8f2;
+            height: 400px;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+        }
+
+        /* Button Styling */
+        .button-container {
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+        }
+
+        /* Output Section */
+        .output-section {
+            background-color: #ffffff;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Output Header Styling */
+        .output-header {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        /* Output Styling */
+        .output {
+            font-family: monospace;
+            white-space: pre-wrap; /* Preserve whitespace */
+            background-color: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            overflow-x: auto;
+            max-height: 400px; /* Limit height and add scrollbar */
+            color: #333;
+        }
+
+        /* Loading Spinner Styling */
+        .loading {
+            /* Hidden by default */
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 8px solid #f3f3f3; /* Light grey */
+            border-top: 8px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .ace_selection {
+            background: "white;" !important; /* Yellowish selection color */
+        }
+    </style>
+</body>
+</html>
