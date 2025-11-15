@@ -5,80 +5,160 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Online Code Editor</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            padding: 20px;
         }
         
         .login-container {
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            max-width: 400px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            padding: 40px;
             width: 100%;
+            max-width: 450px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .login-container:hover {
+            transform: translateY(-5px);
         }
         
         .logo {
-            font-size: 28px;
-            font-weight: bold;
+            font-size: 2.5rem;
+            font-weight: 700;
             color: #3498db;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tagline {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
         }
         
         .description {
-            color: #666;
-            margin-bottom: 30px;
+            color: #555;
+            margin-bottom: 35px;
             line-height: 1.6;
+            font-size: 1rem;
         }
         
         .discord-btn {
-            background-color: #7289da;
+            background: #7289da;
             color: white;
             border: none;
-            padding: 15px 30px;
-            font-size: 18px;
-            border-radius: 5px;
+            padding: 16px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto;
-            transition: background-color 0.3s ease;
+            margin: 0 auto 30px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(114, 137, 218, 0.3);
             text-decoration: none;
+            font-weight: 600;
         }
         
         .discord-btn:hover {
-            background-color: #677bc4;
+            background: #677bc4;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(114, 137, 218, 0.4);
+        }
+        
+        .discord-btn:active {
+            transform: translateY(0);
         }
         
         .discord-btn i {
-            margin-right: 10px;
-            font-size: 24px;
+            margin-right: 12px;
+            font-size: 1.5rem;
         }
         
         .features {
-            margin-top: 30px;
             text-align: left;
+            margin-top: 30px;
         }
         
         .feature {
             display: flex;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 10px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .feature:hover {
+            background-color: rgba(52, 152, 219, 0.1);
         }
         
         .feature i {
             color: #3498db;
-            font-size: 20px;
-            margin-right: 10px;
+            font-size: 1.5rem;
+            margin-right: 15px;
+            min-width: 30px;
+        }
+        
+        .feature-text {
+            color: #333;
+            font-size: 0.95rem;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .login-container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+            
+            .tagline {
+                font-size: 1rem;
+            }
+            
+            .discord-btn {
+                padding: 14px 25px;
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 25px 15px;
+            }
+            
+            .logo {
+                font-size: 1.8rem;
+            }
+            
+            .feature {
+                margin-bottom: 15px;
+            }
+            
+            .feature i {
+                font-size: 1.2rem;
+                margin-right: 10px;
+            }
         }
     </style>
     <!-- Font Awesome for icons -->
@@ -87,6 +167,7 @@
 <body>
     <div class="login-container">
         <div class="logo">Online Code Editor</div>
+        <div class="tagline">Write, Compile & Execute Code Online</div>
         <p class="description">
             Sign in with your Discord account to access the online code editor. 
             Collaborate, code, and execute programs in real-time.
@@ -100,15 +181,15 @@
         <div class="features">
             <div class="feature">
                 <i class="fas fa-code"></i>
-                <span>Write and execute code in multiple languages</span>
+                <span class="feature-text">Write and execute code in multiple languages</span>
             </div>
             <div class="feature">
                 <i class="fas fa-users"></i>
-                <span>Collaborate with other developers</span>
+                <span class="feature-text">Collaborate with other developers</span>
             </div>
             <div class="feature">
                 <i class="fas fa-cloud"></i>
-                <span>Access your code from anywhere</span>
+                <span class="feature-text">Access your code from anywhere</span>
             </div>
         </div>
     </div>

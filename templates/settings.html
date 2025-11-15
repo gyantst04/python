@@ -5,56 +5,90 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Settings - Online Code Editor</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            min-height: 100vh;
             padding: 0;
         }
         
         .header {
-            background-color: #3498db;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 15px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
         
         .logo {
-            font-size: 24px;
-            font-weight: bold;
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo-icon {
+            margin-right: 10px;
         }
         
         .user-info {
             display: flex;
             align-items: center;
+            gap: 15px;
         }
         
         .user-avatar {
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
-            background-color: #ddd;
-            margin-right: 15px;
+            background: linear-gradient(45deg, #3498db, #9b59b6);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .user-details {
+            text-align: right;
+        }
+        
+        .username {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .user-tag {
+            font-size: 0.85rem;
+            opacity: 0.9;
         }
         
         .logout-btn {
-            background-color: #e74c3c;
+            background-color: rgba(255, 255, 255, 0.2);
             color: white;
-            border: none;
+            border: 1px solid rgba(255, 255, 255, 0.3);
             padding: 8px 15px;
-            border-radius: 5px;
+            border-radius: 20px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
+            font-weight: 500;
         }
         
         .logout-btn:hover {
-            background-color: #c0392b;
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
         }
         
         .container {
@@ -64,109 +98,189 @@
         }
         
         .navigation {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
             margin-bottom: 30px;
         }
         
         .nav-links {
             display: flex;
-            gap: 20px;
+            gap: 10px;
+            flex-wrap: wrap;
         }
         
         .nav-link {
             text-decoration: none;
             color: #3498db;
-            padding: 10px 20px;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
+            padding: 12px 25px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            border: 2px solid transparent;
         }
         
         .nav-link:hover {
-            background-color: #f4f4f9;
+            background-color: #f8f9fa;
         }
         
         .nav-link.active {
-            background-color: #3498db;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            border: 2px solid transparent;
         }
         
         .settings-container {
             display: flex;
-            gap: 20px;
+            gap: 25px;
+            flex-wrap: wrap;
         }
         
         .settings-sidebar {
             flex: 1;
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            min-width: 250px;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            align-self: flex-start;
+            position: sticky;
+            top: 90px;
+        }
+        
+        .settings-sidebar h3 {
+            color: #3498db;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .settings-menu {
+            list-style: none;
+        }
+        
+        .settings-menu li {
+            margin-bottom: 10px;
+        }
+        
+        .settings-menu a {
+            text-decoration: none;
+            color: #555;
+            padding: 12px 15px;
+            border-radius: 8px;
+            display: block;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .settings-menu a:hover {
+            background-color: #f8f9fa;
+            color: #3498db;
+        }
+        
+        .settings-menu a.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
         }
         
         .settings-content {
             flex: 3;
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            min-width: 300px;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .settings-content h2 {
+            color: #3498db;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
         }
         
         .setting-group {
-            margin-bottom: 30px;
+            margin-bottom: 40px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         .setting-group h3 {
-            color: #3498db;
-            border-bottom: 2px solid #3498db;
+            color: #333;
+            margin-bottom: 20px;
             padding-bottom: 10px;
-            margin-top: 0;
+            border-bottom: 1px solid #eee;
         }
         
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
         
         .form-group label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
+            margin-bottom: 8px;
+            font-weight: 600;
             color: #333;
+            font-size: 1.05rem;
         }
         
         .form-group input, .form-group select, .form-group textarea {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
+            padding: 14px;
+            border: 2px solid #e1e5eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            background-color: #fafbfc;
+        }
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        
+        .form-group input:read-only {
+            background-color: #f8f9fa;
+            cursor: not-allowed;
         }
         
         .btn {
-            background-color: #3498db;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 12px 25px;
+            padding: 14px 30px;
             text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
-            transition: background-color 0.3s ease;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
             border: none;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 1.05rem;
+            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
         }
         
         .btn:hover {
-            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
         }
         
         .btn-danger {
-            background-color: #e74c3c;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
         }
         
         .btn-danger:hover {
-            background-color: #c0392b;
+            box-shadow: 0 6px 15px rgba(231, 76, 60, 0.4);
         }
         
         .btn-block {
@@ -174,14 +288,98 @@
             text-align: center;
             width: 100%;
         }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            
+            .logo {
+                font-size: 1.5rem;
+            }
+            
+            .user-info {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .container {
+                margin: 20px auto;
+                padding: 0 15px;
+            }
+            
+            .settings-container {
+                flex-direction: column;
+            }
+            
+            .settings-sidebar {
+                position: static;
+                width: 100%;
+            }
+            
+            .settings-content {
+                padding: 20px;
+            }
+            
+            .nav-links {
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header {
+                padding: 10px;
+            }
+            
+            .logo {
+                font-size: 1.3rem;
+            }
+            
+            .user-avatar {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+            
+            .username {
+                font-size: 1rem;
+            }
+            
+            .user-tag {
+                font-size: 0.75rem;
+            }
+            
+            .logout-btn {
+                padding: 6px 12px;
+                font-size: 0.9rem;
+            }
+            
+            .settings-content {
+                padding: 15px;
+            }
+            
+            .form-group input, .form-group select, .form-group textarea {
+                padding: 12px;
+                font-size: 0.95rem;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="header">
-        <div class="logo">Online Code Editor</div>
+        <div class="logo">
+            <span class="logo-icon">🖥️</span>
+            <span>Online Code Editor</span>
+        </div>
         <div class="user-info">
             <div class="user-avatar">{{ user.username[0].upper() }}</div>
-            <span>{{ user.username }}#{{ user.discriminator }}</span>
+            <div class="user-details">
+                <div class="username">{{ user.username }}</div>
+                <div class="user-tag">#{{ user.discriminator }}</div>
+            </div>
             <button class="logout-btn" onclick="location.href='/logout'">Logout</button>
         </div>
     </div>
@@ -197,11 +395,11 @@
         <div class="settings-container">
             <div class="settings-sidebar">
                 <h3>Settings Menu</h3>
-                <ul style="list-style: none; padding: 0;">
-                    <li style="margin-bottom: 10px;"><a href="#profile" style="text-decoration: none; color: #3498db;">Profile Settings</a></li>
-                    <li style="margin-bottom: 10px;"><a href="#account" style="text-decoration: none; color: #3498db;">Account Settings</a></li>
-                    <li style="margin-bottom: 10px;"><a href="#preferences" style="text-decoration: none; color: #3498db;">Preferences</a></li>
-                    <li style="margin-bottom: 10px;"><a href="#security" style="text-decoration: none; color: #3498db;">Security</a></li>
+                <ul class="settings-menu">
+                    <li><a href="#profile" class="active">Profile Settings</a></li>
+                    <li><a href="#account">Account Settings</a></li>
+                    <li><a href="#preferences">Preferences</a></li>
+                    <li><a href="#security">Security</a></li>
                 </ul>
             </div>
             
