@@ -599,13 +599,13 @@
                 {% if server.logs %}
                     {% for log in server.logs %}
                     <div class="log-entry">
-                        <span class="log-timestamp">[{{ "now" | date }}]</span>
+                        <span class="log-timestamp">[{{ "now" }}]</span>
                         <span class="log-message">{{ log }}</span>
                     </div>
                     {% endfor %}
                 {% else %}
                 <div class="log-entry">
-                    <span class="log-timestamp">[{{ "now" | date }}]</span>
+                    <span class="log-timestamp">[{{ "now" }}]</span>
                     <span class="log-info">Console initialized. Server is currently {{ server.status }}.</span>
                 </div>
                 {% endif %}
