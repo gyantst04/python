@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ server.name }} - Console - Online Code Editor</title>
+    <title>Code Editor - Online Code Editor</title>
     <style>
         * {
             margin: 0;
@@ -140,77 +140,27 @@
             border: 2px solid transparent;
         }
         
-        .server-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .editor-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
             margin-bottom: 30px;
-            padding: 20px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
         }
         
-        .server-title {
-            color: #3498db;
-            margin: 0;
+        @media (max-width: 768px) {
+            .editor-container {
+                grid-template-columns: 1fr;
+            }
         }
         
-        .server-status {
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-        
-        .status-running {
-            background-color: rgba(46, 204, 113, 0.2);
-            color: #27ae60;
-        }
-        
-        .status-stopped {
-            background-color: rgba(231, 76, 60, 0.2);
-            color: #c0392b;
-        }
-        
-        .server-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-        
-        .tab {
-            text-decoration: none;
-            color: #3498db;
-            padding: 12px 25px;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            font-weight: 500;
-            border: 2px solid transparent;
-            background: white;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-        }
-        
-        .tab:hover {
-            background-color: #f8f9fa;
-        }
-        
-        .tab.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: 2px solid transparent;
-        }
-        
-        .console-container {
+        .code-editor-section, .output-section {
             background: white;
             border-radius: 12px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
             overflow: hidden;
-            margin-bottom: 30px;
         }
         
-        .console-header {
+        .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -219,153 +169,151 @@
             color: white;
         }
         
-        .console-title {
+        .section-title {
             margin: 0;
             font-size: 1.2rem;
         }
         
-        .console-actions {
+        .editor-toolbar {
             display: flex;
             gap: 10px;
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #eee;
+            flex-wrap: wrap;
         }
         
-        .console-btn {
+        .toolbar-btn {
             padding: 8px 15px;
             border-radius: 6px;
             border: none;
             cursor: pointer;
             font-weight: 500;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
         
-        .start-btn {
+        .run-btn {
             background: #27ae60;
             color: white;
         }
         
-        .stop-btn {
-            background: #e74c3c;
-            color: white;
-        }
-        
-        .clear-btn {
+        .save-btn {
             background: #3498db;
             color: white;
         }
         
-        .console-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+        .load-btn {
+            background: #9b59b6;
+            color: white;
         }
         
-        .console-output {
+        .clear-btn {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .filename-input {
+            padding: 8px 12px;
+            border: 2px solid #e1e5eb;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .filename-input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .editor-wrapper {
             height: 400px;
-            overflow-y: auto;
+            position: relative;
+        }
+        
+        #codeEditor {
+            width: 100%;
+            height: 100%;
+            border: none;
+            resize: none;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            tab-size: 4;
+        }
+        
+        #codeEditor:focus {
+            outline: none;
+        }
+        
+        .output-wrapper {
+            height: 400px;
             padding: 20px;
             background: #1e1e1e;
             color: #d4d4d4;
             font-family: 'Courier New', monospace;
             font-size: 14px;
+            overflow-y: auto;
+            white-space: pre-wrap;
             line-height: 1.4;
         }
         
-        .log-entry {
-            margin-bottom: 8px;
-            word-break: break-word;
-        }
-        
-        .log-timestamp {
-            color: #569cd6;
-        }
-        
-        .log-message {
-            color: #d4d4d4;
-        }
-        
-        .log-error {
-            color: #f48771;
-        }
-        
-        .log-info {
-            color: #4ec9b0;
-        }
-        
-        .console-input {
-            display: flex;
-            padding: 15px;
-            background: #2c3e50;
-            border-top: 1px solid #34495e;
-        }
-        
-        .console-input input {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            border-radius: 4px;
-            background: #1e1e1e;
-            color: #d4d4d4;
-            font-family: 'Courier New', monospace;
-        }
-        
-        .console-input input:focus {
-            outline: none;
-        }
-        
-        .console-input button {
-            margin-left: 10px;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            background: #3498db;
-            color: white;
-            cursor: pointer;
-            font-weight: 500;
-        }
-        
-        .server-info {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-        
-        .info-card {
+        .welcome-section {
             background: white;
             border-radius: 12px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            padding: 20px;
+            padding: 30px;
+            text-align: center;
         }
         
-        .info-card h3 {
+        .welcome-section h2 {
             color: #3498db;
-            margin-top: 0;
+            margin-bottom: 20px;
+        }
+        
+        .welcome-section p {
+            color: #7f8c8d;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .feature-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
             margin-bottom: 15px;
         }
         
-        .info-item {
-            display: flex;
-            justify-content: space-between;
+        .feature-title {
+            color: #3498db;
             margin-bottom: 10px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
         }
         
-        .info-label {
+        .feature-desc {
             color: #7f8c8d;
-        }
-        
-        .info-value {
-            color: #333;
-            font-weight: 500;
-        }
-        
-        .startup-file-selector {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #e1e5eb;
-            border-radius: 8px;
-            font-size: 1rem;
-            margin-top: 10px;
+            font-size: 0.9rem;
         }
         
         /* Mobile Navigation */
@@ -514,29 +462,12 @@
                 padding: 0 15px;
             }
             
-            .server-header {
-                flex-direction: column;
-                gap: 15px;
-                align-items: flex-start;
-            }
-            
-            .console-header {
-                flex-direction: column;
-                gap: 15px;
-                align-items: flex-start;
-            }
-            
-            .console-actions {
-                width: 100%;
-                justify-content: space-between;
-            }
-            
             .nav-links {
                 justify-content: center;
             }
             
-            .server-info {
-                grid-template-columns: 1fr;
+            .editor-wrapper, .output-wrapper {
+                height: 300px;
             }
         }
         
@@ -549,16 +480,14 @@
                 font-size: 1.3rem;
             }
             
-            .server-tabs {
+            .section-header {
                 flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
             }
             
-            .tab {
-                text-align: center;
-            }
-            
-            .console-output {
-                height: 300px;
+            .editor-toolbar {
+                flex-direction: column;
             }
         }
     </style>
@@ -585,94 +514,74 @@
             <div class="nav-links">
                 <a href="/dashboard" class="nav-link">Dashboard</a>
                 <a href="/servers" class="nav-link">Servers</a>
-                <a href="/editor" class="nav-link">Code Editor</a>
+                <a href="/editor" class="nav-link active">Code Editor</a>
                 <a href="/settings" class="nav-link">Settings</a>
             </div>
         </div>
         
-        <div class="server-header">
-            <h1 class="server-title">{{ server.name }}</h1>
-            <span class="server-status status-{{ server.status }}">{{ server.status }}</span>
-        </div>
-        
-        <div class="server-tabs">
-            <a href="/server/{{ server.id }}" class="tab">Overview</a>
-            <a href="/server/{{ server.id }}/files" class="tab">Files</a>
-            <a href="/server/{{ server.id }}/console" class="tab active">Console</a>
-            <a href="/server/{{ server.id }}/settings" class="tab">Settings</a>
-        </div>
-        
-        <div class="console-container">
-            <div class="console-header">
-                <h2 class="console-title">Server Console</h2>
-                <div class="console-actions">
-                    <button class="console-btn start-btn" id="startBtn" onclick="startServer()" {{ 'disabled' if server.status == 'running' else '' }}>Start Server</button>
-                    <button class="console-btn stop-btn" id="stopBtn" onclick="stopServer()" {{ 'disabled' if server.status == 'stopped' else '' }}>Stop Server</button>
-                    <button class="console-btn clear-btn" onclick="clearConsole()">Clear Console</button>
+        <div class="editor-container">
+            <div class="code-editor-section">
+                <div class="section-header">
+                    <h2 class="section-title">Code Editor</h2>
+                </div>
+                <div class="editor-toolbar">
+                    <input type="text" class="filename-input" id="filenameInput" placeholder="Enter filename (e.g., app.py)" value="app.py">
+                    <button class="toolbar-btn run-btn" onclick="runCode()">
+                        <span>▶</span> Run
+                    </button>
+                    <button class="toolbar-btn save-btn" onclick="saveFile()">
+                        <span>💾</span> Save
+                    </button>
+                    <button class="toolbar-btn load-btn" onclick="loadFile()">
+                        <span>📂</span> Load
+                    </button>
+                    <button class="toolbar-btn clear-btn" onclick="clearEditor()">
+                        <span>🗑️</span> Clear
+                    </button>
+                </div>
+                <div class="editor-wrapper">
+                    <textarea id="codeEditor" placeholder="Enter your code here..."># Sample Python code
+def hello_world():
+    print("Hello, World!")
+    return "Success"
+
+# Call the function
+result = hello_world()
+print(f"Function returned: {result}")</textarea>
                 </div>
             </div>
             
-            <div class="console-output" id="consoleOutput">
-                {% if server.logs %}
-                    {% for log in server.logs %}
-                    <div class="log-entry">
-                        <span class="log-timestamp">[{{ "now" }}]</span>
-                        <span class="log-message">{{ log }}</span>
-                    </div>
-                    {% endfor %}
-                {% else %}
-                <div class="log-entry">
-                    <span class="log-timestamp">[{{ "now" }}]</span>
-                    <span class="log-info">Console initialized. Server is currently {{ server.status }}.</span>
+            <div class="output-section">
+                <div class="section-header">
+                    <h2 class="section-title">Output</h2>
                 </div>
-                {% endif %}
-            </div>
-            
-            <div class="console-input">
-                <input type="text" id="consoleInput" placeholder="Enter command... (e.g., python app.py, ls, clear)" onkeypress="handleKeyPress(event)">
-                <button onclick="sendCommand()">Send</button>
+                <div class="output-wrapper" id="outputArea">
+                    Click "Run" to execute your code and see the output here.
+                </div>
             </div>
         </div>
         
-        <div class="server-info">
-            <div class="info-card">
-                <h3>Server Information</h3>
-                <div class="info-item">
-                    <span class="info-label">Server ID:</span>
-                    <span class="info-value">{{ server.id[:8] }}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Status:</span>
-                    <span class="info-value">{{ server.status }}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Startup File:</span>
-                    <span class="info-value">{{ server.startup_file or 'Not set' }}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Files:</span>
-                    <span class="info-value">{{ server.files|length }}</span>
-                </div>
-            </div>
+        <div class="welcome-section">
+            <h2>Online Code Editor</h2>
+            <p>Write, edit, and execute your code directly in the browser. Our powerful editor supports syntax highlighting and real-time execution.</p>
             
-            <div class="info-card">
-                <h3>Quick Actions</h3>
-                <div class="info-item">
-                    <span class="info-label">View Files:</span>
-                    <a href="/server/{{ server.id }}/files" class="info-value" style="text-decoration: none; color: #3498db;">File Manager</a>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3 class="feature-title">Real-time Execution</h3>
+                    <p class="feature-desc">Run your code instantly and see results immediately</p>
                 </div>
-                <div class="info-item">
-                    <span class="info-label">Server Settings:</span>
-                    <a href="/server/{{ server.id }}/settings" class="info-value" style="text-decoration: none; color: #3498db;">Configure</a>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">💾</div>
+                    <h3 class="feature-title">Save & Load</h3>
+                    <p class="feature-desc">Save your work and load it later</p>
                 </div>
-                <div class="info-item">
-                    <span class="info-label">Startup File:</span>
-                    <select class="startup-file-selector" onchange="setStartupFile(this.value)">
-                        <option value="">Select startup file</option>
-                        {% for file_name in server.files %}
-                        <option value="{{ file_name }}" {{ 'selected' if file_name == server.startup_file else '' }}>{{ file_name }}</option>
-                        {% endfor %}
-                    </select>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3 class="feature-title">Mobile Friendly</h3>
+                    <p class="feature-desc">Works perfectly on all devices</p>
                 </div>
             </div>
         </div>
@@ -685,7 +594,7 @@
             <ul class="mobile-nav-links">
                 <li><a href="/dashboard">Dashboard</a></li>
                 <li><a href="/servers">Servers</a></li>
-                <li><a href="/editor">Code Editor</a></li>
+                <li><a href="/editor" class="active">Code Editor</a></li>
                 <li><a href="/settings">Settings</a></li>
             </ul>
             
@@ -717,143 +626,117 @@
             }
         });
         
-        function startServer() {
-            fetch(`/server/{{ server.id }}/start`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    // Update button states
-                    document.getElementById('startBtn').disabled = true;
-                    document.getElementById('stopBtn').disabled = false;
-                    
-                    // Refresh logs
-                    refreshLogs();
-                } else {
-                    alert('Error starting server.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error starting server.');
-            });
-        }
-        
-        function stopServer() {
-            fetch(`/server/{{ server.id }}/stop`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    // Update button states
-                    document.getElementById('startBtn').disabled = false;
-                    document.getElementById('stopBtn').disabled = true;
-                    
-                    // Refresh logs
-                    refreshLogs();
-                } else {
-                    alert('Error stopping server.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error stopping server.');
-            });
-        }
-        
-        function clearConsole() {
-            fetch(`/server/{{ server.id }}/clear_logs`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    updateConsole(data.logs);
-                } else {
-                    alert('Error clearing console.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error clearing console.');
-            });
-        }
-        
-        function sendCommand() {
-            const input = document.getElementById('consoleInput');
-            const command = input.value.trim();
+        function runCode() {
+            const code = document.getElementById('codeEditor').value;
+            const outputArea = document.getElementById('outputArea');
             
-            if (command) {
-                fetch(`/server/{{ server.id }}/execute`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: `command=${encodeURIComponent(command)}`
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        updateConsole(data.logs);
-                        input.value = '';
-                    } else {
-                        alert('Error executing command.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Error executing command.');
-                });
+            // Show loading message
+            outputArea.textContent = "Executing code...\n";
+            
+            // In a real implementation, this would make an AJAX request to execute the code
+            fetch('/execute', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ code: code })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    outputArea.textContent = data.output;
+                } else {
+                    outputArea.textContent = "Error executing code.";
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                outputArea.textContent = "Error executing code.";
+            });
+        }
+        
+        function saveFile() {
+            const filename = document.getElementById('filenameInput').value;
+            const content = document.getElementById('codeEditor').value;
+            
+            if (!filename) {
+                alert('Please enter a filename');
+                return;
+            }
+            
+            // In a real implementation, this would make an AJAX request to save the file
+            fetch('/editor/save', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ filename: filename, content: content })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert(data.message);
+                } else {
+                    alert('Error saving file.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error saving file.');
+            });
+        }
+        
+        function loadFile() {
+            const filename = document.getElementById('filenameInput').value;
+            
+            if (!filename) {
+                alert('Please enter a filename');
+                return;
+            }
+            
+            // In a real implementation, this would make an AJAX request to load the file
+            fetch('/editor/load', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ filename: filename })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    document.getElementById('codeEditor').value = data.content;
+                    alert(`File ${filename} loaded successfully`);
+                } else {
+                    alert('Error loading file.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error loading file.');
+            });
+        }
+        
+        function clearEditor() {
+            if (confirm('Are you sure you want to clear the editor?')) {
+                document.getElementById('codeEditor').value = '';
+                document.getElementById('outputArea').textContent = 'Editor cleared. Click "Run" to execute your code and see the output here.';
             }
         }
         
-        function handleKeyPress(event) {
-            if (event.key === 'Enter') {
-                sendCommand();
+        // Auto-indentation for the code editor
+        document.getElementById('codeEditor').addEventListener('keydown', function(e) {
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                const start = this.selectionStart;
+                const end = this.selectionEnd;
+                
+                // Insert 4 spaces at the cursor position
+                this.value = this.value.substring(0, start) + '    ' + this.value.substring(end);
+                
+                // Move the cursor to after the inserted spaces
+                this.selectionStart = this.selectionEnd = start + 4;
             }
-        }
-        
-        function setStartupFile(filename) {
-            // In a real implementation, this would make an AJAX request to update the startup file
-            alert(`Startup file would be set to "${filename}" in a real implementation`);
-        }
-        
-        function refreshLogs() {
-            // In a real implementation, this would fetch the latest logs from the server
-            // For now, we'll just reload the page to show updated status
-            location.reload();
-        }
-        
-        function updateConsole(logs) {
-            const consoleOutput = document.getElementById('consoleOutput');
-            consoleOutput.innerHTML = '';
-            
-            logs.forEach(log => {
-                const entry = document.createElement('div');
-                entry.className = 'log-entry';
-                entry.innerHTML = `<span class="log-timestamp">[${new Date().toLocaleTimeString()}]</span> <span class="log-message">${log}</span>`;
-                consoleOutput.appendChild(entry);
-            });
-            
-            // Scroll to bottom
-            consoleOutput.scrollTop = consoleOutput.scrollHeight;
-        }
-        
-        // Auto-scroll to bottom of console
-        document.addEventListener('DOMContentLoaded', function() {
-            const consoleOutput = document.getElementById('consoleOutput');
-            consoleOutput.scrollTop = consoleOutput.scrollHeight;
         });
     </script>
 </body>

@@ -6,19 +6,11 @@
       "status": "running",
       "startup_file": "app.py",
       "logs": [
-        "Starting server death...",
-        "Stopping server death...",
-        "Starting server death...",
-        "Stopping server death...",
-        "Starting server death...",
-        "Executing app.py...",
-        ">>> print('Hello from startup file!')",
-        "Hello from startup file!",
-        "Process finished with exit code 0"
+        "Console logs cleared for server death"
       ],
       "files": {
         "app.py": {
-          "content": "print=\"death\""
+          "content": "from flask import Flask, jsonify\n\napp = Flask(__name__)\n\n@app.route('/')\ndef home():\n    return jsonify({\"message\": \"Hello from Python on Vercel!\"})\n\n@app.route('/api/hello')\ndef hello():\n    return jsonify({\"message\": \"Greetings from the Python API!\"})\n\nif __name__ == '__main__':\n    app.run(debug=True)"
         }
       }
     }

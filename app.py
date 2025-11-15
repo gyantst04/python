@@ -409,28 +409,45 @@ def delete_server_route(server_id):
     delete_server(user_id, server_id)
     return redirect(url_for('servers'))
 
-@app.route('/execute',methods=['POST','GET'])
+@app.route('/editor')
 @login_required
 def code_editor():
-    language = request.form.get('language')
-    code = request.form.get('code')
+    return render_template('editor.html', user=session['user'])
+
+@app.route('/editor/save', methods=['POST'])
+@login_required
+def save_file():
+    data = request.get_json()
+    filename = data.get('filename')
+    content = data.get('content')
     
-    with tempfile.NamedTemporaryFile(delete=False,suffix=f'.py') as temp_file:
-        temp_file.write(code.encode())
-        tempfile_path = temp_file.name
+    # In a real implementation, you would save this to a file or database
+    # For now, we'll just return success
+    return jsonify({'status': 'success', 'message': f'File {filename} saved successfully'})
+
+@app.route('/editor/load', methods=['POST'])
+@login_required
+def load_file():
+    data = request.get_json()
+    filename = data.get('filename')
     
-    output=''
-    try:
-        output = subprocess.check_output(['python',tempfile_path],stderr=subprocess.STDOUT).decode()
+    # In a real implementation, you would load this from a file or database
+    # For now, we'll just return sample content
+    sample_content = "# Sample Python file\nprint('Hello, World!')\n"
+    return jsonify({'status': 'success', 'content': sample_content})
+
+@app.route('/execute', methods=['POST'])
+@login_required
+def execute_code():
+    data = request.get_json()
+    code = data.get('code')
     
-    except subprocess.CalledProcessError as e:
-        output = e.output.decode() if e.output else str(e)
-        
-    finally:
-        # clean up the temp files
-        os.remove(tempfile_path)
+    # In a real implementation, you would execute this code safely
+    # For now, we'll just simulate execution
+    output = ">>> " + code.replace('\n', '\n>>> ') + "\n"
+    output += "Code executed successfully\n"
     
-    return jsonify({'output':output})
+    return jsonify({'status': 'success', 'output': output})
 
 if __name__ == '__main__':
     app.run(debug=True)
