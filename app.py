@@ -211,8 +211,9 @@ def create_file(server_id):
 @login_required
 def edit_file(server_id):
     user_id = session['user']['id']
-    file_name = request.form.get('file_name')
-    file_content = request.form.get('file_content')
+    data = request.get_json()
+    file_name = data.get('file_name')
+    file_content = data.get('file_content')
     
     servers = load_servers()
     if user_id in servers and server_id in servers[user_id]:
@@ -220,14 +221,18 @@ def edit_file(server_id):
         if 'files' in server and file_name in server['files']:
             server['files'][file_name]['content'] = file_content
             save_servers(servers)
-    
-    return jsonify({'status': 'success'})
+            return jsonify({'status': 'success'})
+        else:
+            return jsonify({'status': 'error', 'message': 'File not found'}), 404
+    else:
+        return jsonify({'status': 'error', 'message': 'Server not found'}), 404
 
 @app.route('/server/<server_id>/files/delete', methods=['POST'])
 @login_required
 def delete_file(server_id):
     user_id = session['user']['id']
-    file_name = request.form.get('file_name')
+    data = request.get_json()
+    file_name = data.get('file_name')
     
     servers = load_servers()
     if user_id in servers and server_id in servers[user_id]:
@@ -235,15 +240,19 @@ def delete_file(server_id):
         if 'files' in server and file_name in server['files']:
             del server['files'][file_name]
             save_servers(servers)
-    
-    return jsonify({'status': 'success'})
+            return jsonify({'status': 'success'})
+        else:
+            return jsonify({'status': 'error', 'message': 'File not found'}), 404
+    else:
+        return jsonify({'status': 'error', 'message': 'Server not found'}), 404
 
 @app.route('/server/<server_id>/files/rename', methods=['POST'])
 @login_required
 def rename_file(server_id):
     user_id = session['user']['id']
-    old_name = request.form.get('old_name')
-    new_name = request.form.get('new_name')
+    data = request.get_json()
+    old_name = data.get('old_name')
+    new_name = data.get('new_name')
     
     servers = load_servers()
     if user_id in servers and server_id in servers[user_id]:
@@ -253,8 +262,28 @@ def rename_file(server_id):
             server['files'][new_name] = server['files'][old_name]
             del server['files'][old_name]
             save_servers(servers)
+            return jsonify({'status': 'success'})
+        else:
+            return jsonify({'status': 'error', 'message': 'File not found'}), 404
+    else:
+        return jsonify({'status': 'error', 'message': 'Server not found'}), 404
+
+@app.route('/server/<server_id>/files/content', methods=['POST'])
+@login_required
+def get_file_content(server_id):
+    user_id = session['user']['id']
+    data = request.get_json()
+    file_name = data.get('file_name')
     
-    return jsonify({'status': 'success'})
+    servers = load_servers()
+    if user_id in servers and server_id in servers[user_id]:
+        server = servers[user_id][server_id]
+        if 'files' in server and file_name in server['files']:
+            return jsonify({'status': 'success', 'content': server['files'][file_name]['content']})
+        else:
+            return jsonify({'status': 'error', 'message': 'File not found'}), 404
+    else:
+        return jsonify({'status': 'error', 'message': 'Server not found'}), 404
 
 @app.route('/server/<server_id>/console')
 @login_required

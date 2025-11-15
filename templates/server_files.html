@@ -852,12 +852,35 @@
             currentEditingFile = fileName;
             document.getElementById('editFileName').textContent = fileName;
             
-            // Get file content from server data (in a real implementation, this would be fetched via AJAX)
-            const fileContent = getFileContent(fileName);
-            document.getElementById('fileEditor').value = fileContent;
-            
-            document.getElementById('editFileModal').classList.add('active');
-            document.body.style.overflow = 'hidden';
+            // Fetch actual file content from server
+            fetch(`/server/{{ server.id }}/files/content`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    file_name: fileName
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    document.getElementById('fileEditor').value = data.content;
+                } else {
+                    // Fallback to placeholder content if file not found
+                    document.getElementById('fileEditor').value = getFileContent(fileName);
+                }
+                
+                document.getElementById('editFileModal').classList.add('active');
+                document.body.style.overflow = 'hidden';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Fallback to placeholder content on error
+                document.getElementById('fileEditor').value = getFileContent(fileName);
+                document.getElementById('editFileModal').classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
         }
         
         function closeEditFileModal() {
@@ -875,9 +898,12 @@
             fetch(`/server/{{ server.id }}/files/edit`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Content-Type': 'application/json',
                 },
-                body: `file_name=${encodeURIComponent(currentEditingFile)}&file_content=${encodeURIComponent(fileContent)}`
+                body: JSON.stringify({
+                    file_name: currentEditingFile,
+                    file_content: fileContent
+                })
             })
             .then(response => response.json())
             .then(data => {
@@ -886,7 +912,7 @@
                     closeEditFileModal();
                     location.reload(); // Refresh to show updated file list
                 } else {
-                    alert('Error saving file.');
+                    alert('Error saving file: ' + data.message);
                 }
             })
             .catch(error => {
@@ -926,9 +952,12 @@
             fetch(`/server/{{ server.id }}/files/rename`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Content-Type': 'application/json',
                 },
-                body: `old_name=${encodeURIComponent(oldName)}&new_name=${encodeURIComponent(newName)}`
+                body: JSON.stringify({
+                    old_name: oldName,
+                    new_name: newName
+                })
             })
             .then(response => response.json())
             .then(data => {
@@ -937,7 +966,7 @@
                     closeRenameModal();
                     location.reload(); // Refresh to show updated file list
                 } else {
-                    alert('Error renaming file.');
+                    alert('Error renaming file: ' + data.message);
                 }
             })
             .catch(error => {
@@ -968,9 +997,11 @@
             fetch(`/server/{{ server.id }}/files/delete`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Content-Type': 'application/json',
                 },
-                body: `file_name=${encodeURIComponent(fileName)}`
+                body: JSON.stringify({
+                    file_name: fileName
+                })
             })
             .then(response => response.json())
             .then(data => {
@@ -979,7 +1010,7 @@
                     closeDeleteModal();
                     location.reload(); // Refresh to show updated file list
                 } else {
-                    alert('Error deleting file.');
+                    alert('Error deleting file: ' + data.message);
                 }
             })
             .catch(error => {
@@ -988,27 +1019,7 @@
             });
         }
         
-        // Close modals when clicking outside
-        document.addEventListener('click', function(event) {
-            const modals = [
-                'createFileModal',
-                'editFileModal',
-                'renameFileModal',
-                'deleteFileModal'
-            ];
-            
-            modals.forEach(modalId => {
-                const modal = document.getElementById(modalId);
-                if (modal && modal.classList.contains('active') && event.target === modal) {
-                    if (modalId === 'createFileModal') closeCreateFileModal();
-                    else if (modalId === 'editFileModal') closeEditFileModal();
-                    else if (modalId === 'renameFileModal') closeRenameModal();
-                    else if (modalId === 'deleteFileModal') closeDeleteModal();
-                }
-            });
-        });
-        
-        // Helper function to get file content (in a real implementation, this would fetch from server)
+        // Get file content for editing
         function getFileContent(fileName) {
             // This is a placeholder - in a real implementation, you would fetch the actual file content
             // For now, we'll return a sample content based on file extension
