@@ -188,6 +188,74 @@ def server_files(server_id):
     server = servers[server_id]
     return render_template('server_files.html', user=session['user'], server=server)
 
+@app.route('/server/<server_id>/files/create', methods=['POST'])
+@login_required
+def create_file(server_id):
+    user_id = session['user']['id']
+    file_name = request.form.get('file_name')
+    file_content = request.form.get('file_content', '')
+    
+    servers = load_servers()
+    if user_id in servers and server_id in servers[user_id]:
+        server = servers[user_id][server_id]
+        if 'files' not in server:
+            server['files'] = {}
+        server['files'][file_name] = {
+            'content': file_content
+        }
+        save_servers(servers)
+    
+    return redirect(url_for('server_files', server_id=server_id))
+
+@app.route('/server/<server_id>/files/edit', methods=['POST'])
+@login_required
+def edit_file(server_id):
+    user_id = session['user']['id']
+    file_name = request.form.get('file_name')
+    file_content = request.form.get('file_content')
+    
+    servers = load_servers()
+    if user_id in servers and server_id in servers[user_id]:
+        server = servers[user_id][server_id]
+        if 'files' in server and file_name in server['files']:
+            server['files'][file_name]['content'] = file_content
+            save_servers(servers)
+    
+    return jsonify({'status': 'success'})
+
+@app.route('/server/<server_id>/files/delete', methods=['POST'])
+@login_required
+def delete_file(server_id):
+    user_id = session['user']['id']
+    file_name = request.form.get('file_name')
+    
+    servers = load_servers()
+    if user_id in servers and server_id in servers[user_id]:
+        server = servers[user_id][server_id]
+        if 'files' in server and file_name in server['files']:
+            del server['files'][file_name]
+            save_servers(servers)
+    
+    return jsonify({'status': 'success'})
+
+@app.route('/server/<server_id>/files/rename', methods=['POST'])
+@login_required
+def rename_file(server_id):
+    user_id = session['user']['id']
+    old_name = request.form.get('old_name')
+    new_name = request.form.get('new_name')
+    
+    servers = load_servers()
+    if user_id in servers and server_id in servers[user_id]:
+        server = servers[user_id][server_id]
+        if 'files' in server and old_name in server['files']:
+            # Move file content to new name
+            server['files'][new_name] = server['files'][old_name]
+            del server['files'][old_name]
+            save_servers(servers)
+    
+    return jsonify({'status': 'success'})
+
 @app.route('/server/<server_id>/console')
 @login_required
 def server_console(server_id):

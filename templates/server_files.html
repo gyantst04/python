@@ -290,6 +290,11 @@
             color: white;
         }
         
+        .rename-btn {
+            background: #f39c12;
+            color: white;
+        }
+        
         .no-files {
             text-align: center;
             padding: 50px;
@@ -308,7 +313,7 @@
             margin-bottom: 25px;
         }
         
-        /* Upload Modal */
+        /* Modals */
         .modal {
             display: none;
             position: fixed;
@@ -334,6 +339,8 @@
             max-width: 500px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
             position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
         }
         
         .close-modal {
@@ -381,6 +388,7 @@
         .form-group textarea {
             min-height: 150px;
             resize: vertical;
+            font-family: 'Courier New', monospace;
         }
         
         .modal-actions {
@@ -414,6 +422,38 @@
         
         .submit-btn:hover {
             opacity: 0.9;
+        }
+        
+        .delete-confirm-btn {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+        }
+        
+        .delete-confirm-btn:hover {
+            opacity: 0.9;
+        }
+        
+        /* Code Editor Modal */
+        .editor-modal .modal-content {
+            max-width: 800px;
+            width: 95%;
+        }
+        
+        .editor-container {
+            height: 400px;
+            border: 2px solid #e1e5eb;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        #fileEditor {
+            width: 100%;
+            height: 100%;
+            border: none;
+            resize: none;
+            font-family: 'Courier New', monospace;
+            padding: 15px;
+            box-sizing: border-box;
         }
         
         /* Mobile Navigation */
@@ -581,6 +621,10 @@
             .file-actions {
                 flex-direction: column;
             }
+            
+            .modal-actions {
+                flex-direction: column;
+            }
         }
         
         @media (max-width: 480px) {
@@ -602,6 +646,10 @@
             
             .modal-content {
                 padding: 20px;
+            }
+            
+            .editor-modal .modal-content {
+                width: 95%;
             }
         }
     </style>
@@ -646,7 +694,7 @@
         
         <div class="page-header">
             <h2 class="page-title">File Management</h2>
-            <button class="upload-btn" onclick="openUploadModal()">+ Upload File</button>
+            <button class="upload-btn" onclick="openCreateFileModal()">+ Create File</button>
         </div>
         
         {% if server.files %}
@@ -658,7 +706,8 @@
                 <div class="file-size">{{ file_data.content|length }} bytes</div>
                 <div class="file-actions">
                     <button class="file-action-btn edit-btn" onclick="editFile('{{ file_name }}')">Edit</button>
-                    <button class="file-action-btn delete-btn" onclick="deleteFile('{{ file_name }}')">Delete</button>
+                    <button class="file-action-btn rename-btn" onclick="openRenameModal('{{ file_name }}')">Rename</button>
+                    <button class="file-action-btn delete-btn" onclick="openDeleteModal('{{ file_name }}')">Delete</button>
                 </div>
             </div>
             {% endfor %}
@@ -666,18 +715,18 @@
         {% else %}
         <div class="no-files">
             <h3>No Files Found</h3>
-            <p>This server doesn't have any files yet. Upload your first file to get started.</p>
-            <button class="upload-btn" onclick="openUploadModal()">+ Upload File</button>
+            <p>This server doesn't have any files yet. Create your first file to get started.</p>
+            <button class="upload-btn" onclick="openCreateFileModal()">+ Create File</button>
         </div>
         {% endif %}
     </div>
     
-    <!-- Upload File Modal -->
-    <div class="modal" id="uploadModal">
+    <!-- Create File Modal -->
+    <div class="modal" id="createFileModal">
         <div class="modal-content">
-            <button class="close-modal" onclick="closeUploadModal()">&times;</button>
-            <h2 class="modal-title">Upload New File</h2>
-            <form id="uploadForm">
+            <button class="close-modal" onclick="closeCreateFileModal()">&times;</button>
+            <h2 class="modal-title">Create New File</h2>
+            <form id="createFileForm" action="/server/{{ server.id }}/files/create" method="POST">
                 <div class="form-group">
                     <label for="fileName">File Name</label>
                     <input type="text" id="fileName" name="file_name" placeholder="Enter file name (e.g., app.py)" required>
@@ -687,8 +736,58 @@
                     <textarea id="fileContent" name="file_content" placeholder="Enter file content"></textarea>
                 </div>
                 <div class="modal-actions">
-                    <button type="button" class="modal-btn cancel-btn" onclick="closeUploadModal()">Cancel</button>
-                    <button type="button" class="modal-btn submit-btn" onclick="uploadFile()">Upload File</button>
+                    <button type="button" class="modal-btn cancel-btn" onclick="closeCreateFileModal()">Cancel</button>
+                    <button type="submit" class="modal-btn submit-btn">Create File</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Edit File Modal -->
+    <div class="modal editor-modal" id="editFileModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeEditFileModal()">&times;</button>
+            <h2 class="modal-title">Edit File: <span id="editFileName"></span></h2>
+            <div class="editor-container">
+                <textarea id="fileEditor" placeholder="Enter file content"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="modal-btn cancel-btn" onclick="closeEditFileModal()">Cancel</button>
+                <button type="button" class="modal-btn submit-btn" onclick="saveFile()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Rename File Modal -->
+    <div class="modal" id="renameFileModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeRenameModal()">&times;</button>
+            <h2 class="modal-title">Rename File</h2>
+            <form id="renameFileForm">
+                <input type="hidden" id="oldFileName" name="old_name">
+                <div class="form-group">
+                    <label for="newFileName">New File Name</label>
+                    <input type="text" id="newFileName" name="new_name" placeholder="Enter new file name" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="modal-btn cancel-btn" onclick="closeRenameModal()">Cancel</button>
+                    <button type="button" class="modal-btn submit-btn" onclick="renameFile()">Rename File</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Delete File Modal -->
+    <div class="modal" id="deleteFileModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeDeleteModal()">&times;</button>
+            <h2 class="modal-title">Delete File</h2>
+            <p>Are you sure you want to delete <strong id="deleteFileName"></strong>? This action cannot be undone.</p>
+            <form id="deleteFileForm">
+                <input type="hidden" id="deleteFileNameInput" name="file_name">
+                <div class="modal-actions">
+                    <button type="button" class="modal-btn cancel-btn" onclick="closeDeleteModal()">Cancel</button>
+                    <button type="button" class="modal-btn delete-confirm-btn" onclick="deleteFile()">Delete File</button>
                 </div>
             </form>
         </div>
@@ -714,6 +813,9 @@
     </div>
     
     <script>
+        // Current file being edited
+        let currentEditingFile = null;
+        
         function toggleMobileNav() {
             const mobileNav = document.getElementById('mobileNav');
             mobileNav.classList.toggle('active');
@@ -732,52 +834,190 @@
             }
         });
         
-        function openUploadModal() {
-            document.getElementById('uploadModal').classList.add('active');
+        // Create File Modal
+        function openCreateFileModal() {
+            document.getElementById('createFileModal').classList.add('active');
             document.body.style.overflow = 'hidden';
         }
         
-        function closeUploadModal() {
-            document.getElementById('uploadModal').classList.remove('active');
+        function closeCreateFileModal() {
+            document.getElementById('createFileModal').classList.remove('active');
             document.body.style.overflow = 'auto';
         }
         
-        // Close modal when clicking outside
-        document.addEventListener('click', function(event) {
-            const modal = document.getElementById('uploadModal');
-            if (modal.classList.contains('active') && 
-                event.target === modal) {
-                closeUploadModal();
-            }
-        });
-        
-        function uploadFile() {
-            const fileName = document.getElementById('fileName').value;
-            const fileContent = document.getElementById('fileContent').value;
+        // Edit File Modal
+        function editFile(fileName) {
+            currentEditingFile = fileName;
+            document.getElementById('editFileName').textContent = fileName;
             
-            if (!fileName) {
-                alert('Please enter a file name');
+            // Get file content from server data (in a real implementation, this would be fetched via AJAX)
+            const fileContent = getFileContent(fileName);
+            document.getElementById('fileEditor').value = fileContent;
+            
+            document.getElementById('editFileModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeEditFileModal() {
+            document.getElementById('editFileModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+            currentEditingFile = null;
+        }
+        
+        function saveFile() {
+            if (!currentEditingFile) return;
+            
+            const fileContent = document.getElementById('fileEditor').value;
+            
+            // In a real implementation, this would make an AJAX request to save the file
+            fetch(`/server/{{ server.id }}/files/edit`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `file_name=${encodeURIComponent(currentEditingFile)}&file_content=${encodeURIComponent(fileContent)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('File saved successfully!');
+                    closeEditFileModal();
+                    location.reload(); // Refresh to show updated file list
+                } else {
+                    alert('Error saving file.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error saving file.');
+            });
+        }
+        
+        // Rename File Modal
+        function openRenameModal(fileName) {
+            document.getElementById('oldFileName').value = fileName;
+            document.getElementById('newFileName').value = fileName;
+            document.getElementById('renameFileModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeRenameModal() {
+            document.getElementById('renameFileModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        
+        function renameFile() {
+            const oldName = document.getElementById('oldFileName').value;
+            const newName = document.getElementById('newFileName').value;
+            
+            if (!oldName || !newName) {
+                alert('Please enter a valid file name.');
                 return;
             }
             
-            // In a real implementation, this would make an AJAX request to upload the file
-            alert(`File "${fileName}" would be uploaded in a real implementation`);
-            closeUploadModal();
+            if (oldName === newName) {
+                closeRenameModal();
+                return;
+            }
             
-            // Reset form
-            document.getElementById('fileName').value = '';
-            document.getElementById('fileContent').value = '';
+            // In a real implementation, this would make an AJAX request to rename the file
+            fetch(`/server/{{ server.id }}/files/rename`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `old_name=${encodeURIComponent(oldName)}&new_name=${encodeURIComponent(newName)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('File renamed successfully!');
+                    closeRenameModal();
+                    location.reload(); // Refresh to show updated file list
+                } else {
+                    alert('Error renaming file.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error renaming file.');
+            });
         }
         
-        function editFile(fileName) {
-            // In a real implementation, this would open an editor for the file
-            alert(`Editing file "${fileName}" would open in a real implementation`);
+        // Delete File Modal
+        function openDeleteModal(fileName) {
+            document.getElementById('deleteFileName').textContent = fileName;
+            document.getElementById('deleteFileNameInput').value = fileName;
+            document.getElementById('deleteFileModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
         }
         
-        function deleteFile(fileName) {
-            if (confirm(`Are you sure you want to delete "${fileName}"?`)) {
-                // In a real implementation, this would make an AJAX request to delete the file
-                alert(`File "${fileName}" would be deleted in a real implementation`);
+        function closeDeleteModal() {
+            document.getElementById('deleteFileModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        
+        function deleteFile() {
+            const fileName = document.getElementById('deleteFileNameInput').value;
+            
+            if (!fileName) return;
+            
+            // In a real implementation, this would make an AJAX request to delete the file
+            fetch(`/server/{{ server.id }}/files/delete`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `file_name=${encodeURIComponent(fileName)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('File deleted successfully!');
+                    closeDeleteModal();
+                    location.reload(); // Refresh to show updated file list
+                } else {
+                    alert('Error deleting file.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error deleting file.');
+            });
+        }
+        
+        // Close modals when clicking outside
+        document.addEventListener('click', function(event) {
+            const modals = [
+                'createFileModal',
+                'editFileModal',
+                'renameFileModal',
+                'deleteFileModal'
+            ];
+            
+            modals.forEach(modalId => {
+                const modal = document.getElementById(modalId);
+                if (modal && modal.classList.contains('active') && event.target === modal) {
+                    if (modalId === 'createFileModal') closeCreateFileModal();
+                    else if (modalId === 'editFileModal') closeEditFileModal();
+                    else if (modalId === 'renameFileModal') closeRenameModal();
+                    else if (modalId === 'deleteFileModal') closeDeleteModal();
+                }
+            });
+        });
+        
+        // Helper function to get file content (in a real implementation, this would fetch from server)
+        function getFileContent(fileName) {
+            // This is a placeholder - in a real implementation, you would fetch the actual file content
+            // For now, we'll return a sample content based on file extension
+            if (fileName.endsWith('.py')) {
+                return '# Sample Python file\nprint("Hello, World!")\n';
+            } else if (fileName.endsWith('.js')) {
+                return '// Sample JavaScript file\nconsole.log("Hello, World!");\n';
+            } else if (fileName.endsWith('.html')) {
+                return '<!DOCTYPE html>\n<html>\n<head>\n    <title>Sample Page</title>\n</head>\n<body>\n    <h1>Hello, World!</h1>\n</body>\n</html>\n';
+            } else {
+                return '// Sample file content\n';
             }
         }
     </script>
