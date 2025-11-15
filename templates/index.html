@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>InternIQ Online IDE</title>
+    <title>Online Code Editor</title>
     <!-- Ensure the path to the CSS file is correct -->
 <link rel="stylesheet" href="static/css/style.css">
 <script src="static/js/lib/ace.js"></script>
@@ -31,7 +31,13 @@
 <script src="static/js/lib/your_custom_snippets.js"></script>
 </head>
 <body>
-    <div class="header">InternIQ Online IDE</div>
+    <div class="header">
+        <span>Online Code Editor</span>
+        <div style="float: right; margin-right: 20px;">
+            <button class="btn" onclick="location.href='/dashboard'">Dashboard</button>
+            <button class="btn" onclick="location.href='/logout'">Logout</button>
+        </div>
+    </div>
     <div class="container">
         <div class="switch-buttons">
             <button class="btn switch-btn" onclick="showInput()">Input</button>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Online Code Editor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        
+        .login-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 20px;
+        }
+        
+        .description {
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .discord-btn {
+            background-color: #7289da;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            transition: background-color 0.3s ease;
+        }
+        
+        .discord-btn:hover {
+            background-color: #677bc4;
+        }
+        
+        .discord-btn i {
+            margin-right: 10px;
+            font-size: 24px;
+        }
+        
+        .features {
+            margin-top: 30px;
+            text-align: left;
+        }
+        
+        .feature {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .feature i {
+            color: #3498db;
+            font-size: 20px;
+            margin-right: 10px;
+        }
+    </style>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">Online Code Editor</div>
+        <p class="description">
+            Sign in with your Discord account to access the online code editor. 
+            Collaborate, code, and execute programs in real-time.
+        </p>
+        
+        <button class="discord-btn" onclick="location.href='/discord-login'">
+            <i class="fab fa-discord"></i>
+            Login with Discord
+        </button>
+        
+        <div class="features">
+            <div class="feature">
+                <i class="fas fa-code"></i>
+                <span>Write and execute code in multiple languages</span>
+            </div>
+            <div class="feature">
+                <i class="fas fa-users"></i>
+                <span>Collaborate with other developers</span>
+            </div>
+            <div class="feature">
+                <i class="fas fa-cloud"></i>
+                <span>Access your code from anywhere</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

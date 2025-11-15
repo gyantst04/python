@@ -16,4 +16,8 @@ window.onload =function(){
         tabSize:4,
         useSoftTabs:true
     });
+    
+    // Set default code
+    editor.setValue("# Welcome to Online Code Editor\n# Write your Python code here\n\nprint('Hello, World!')\n");
+    editor.gotoLine(5);
 }
