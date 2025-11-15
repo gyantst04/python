@@ -266,25 +266,6 @@ def server_console(server_id):
     server = servers[server_id]
     return render_template('server_console.html', user=session['user'], server=server)
 
-@app.route('/server/<server_id>/settings')
-@login_required
-def server_settings(server_id):
-    user_id = session['user']['id']
-    servers = get_user_servers(user_id)
-    if server_id not in servers:
-        return redirect(url_for('servers'))
-    server = servers[server_id]
-    return render_template('server_settings.html', user=session['user'], server=server)
-
-@app.route('/create_server', methods=['POST'])
-@login_required
-def create_server():
-    user_id = session['user']['id']
-    server_name = request.form.get('server_name')
-    if server_name:
-        server_id = add_user_server(user_id, server_name)
-    return redirect(url_for('servers'))
-
 @app.route('/server/<server_id>/start', methods=['POST'])
 @login_required
 def start_server(server_id):
@@ -292,13 +273,22 @@ def start_server(server_id):
     servers = load_servers()
     if user_id in servers and server_id in servers[user_id]:
         server = servers[user_id][server_id]
-        if server['startup_file'] and server['startup_file'] in server['files']:
-            # Add log entry
-            if 'logs' not in server:
-                server['logs'] = []
-            server['logs'].append(f"Starting server {server['name']}...")
-            server['status'] = 'running'
-            save_servers(servers)
+        # Add log entry
+        if 'logs' not in server:
+            server['logs'] = []
+        server['logs'].append(f"Starting server {server['name']}...")
+        
+        # If there's a startup file, simulate running it
+        if server.get('startup_file') and server.get('files', {}).get(server['startup_file']):
+            startup_content = server['files'][server['startup_file']]['content']
+            server['logs'].append(f"Executing {server['startup_file']}...")
+            # Simulate execution output
+            server['logs'].append(">>> print('Hello from startup file!')")
+            server['logs'].append("Hello from startup file!")
+            server['logs'].append("Process finished with exit code 0")
+        
+        server['status'] = 'running'
+        save_servers(servers)
     return jsonify({'status': 'success'})
 
 @app.route('/server/<server_id>/stop', methods=['POST'])
@@ -314,6 +304,87 @@ def stop_server(server_id):
         server['logs'].append(f"Stopping server {server['name']}...")
         save_servers(servers)
     return jsonify({'status': 'success'})
+
+@app.route('/server/<server_id>/execute', methods=['POST'])
+@login_required
+def execute_command(server_id):
+    user_id = session['user']['id']
+    command = request.form.get('command')
+    
+    servers = load_servers()
+    if user_id in servers and server_id in servers[user_id]:
+        server = servers[user_id][server_id]
+        if 'logs' not in server:
+            server['logs'] = []
+        
+        # Add command to logs
+        server['logs'].append(f"$ {command}")
+        
+        # Simulate command execution
+        if command.startswith('python '):
+            filename = command[7:]  # Remove 'python ' prefix
+            if server.get('files', {}).get(filename):
+                file_content = server['files'][filename]['content']
+                server['logs'].append(f"Executing {filename}...")
+                # Simulate Python execution
+                server['logs'].append(">>> # Python execution output")
+                server['logs'].append("Execution completed successfully")
+            else:
+                server['logs'].append(f"Error: File '{filename}' not found")
+        elif command == 'ls' or command == 'dir':
+            server['logs'].append("Files in current directory:")
+            for file_name in server.get('files', {}):
+                server['logs'].append(f"  {file_name}")
+        elif command == 'clear':
+            server['logs'] = [f"Console cleared for server {server['name']}"]
+        else:
+            server['logs'].append(f"Command '{command}' executed")
+        
+        save_servers(servers)
+        return jsonify({'status': 'success', 'logs': server['logs']})
+    
+    return jsonify({'status': 'error', 'message': 'Server not found'})
+
+@app.route('/server/<server_id>/clear_logs', methods=['POST'])
+@login_required
+def clear_logs(server_id):
+    user_id = session['user']['id']
+    servers = load_servers()
+    if user_id in servers and server_id in servers[user_id]:
+        server = servers[user_id][server_id]
+        server['logs'] = [f"Console logs cleared for server {server['name']}"]
+        save_servers(servers)
+        return jsonify({'status': 'success', 'logs': server['logs']})
+    return jsonify({'status': 'error', 'message': 'Server not found'})
+
+@app.route('/server/<server_id>/settings')
+@login_required
+def server_settings(server_id):
+    user_id = session['user']['id']
+    servers = get_user_servers(user_id)
+    if server_id not in servers:
+        return redirect(url_for('servers'))
+    server = servers[server_id]
+    return render_template('server_settings.html', user=session['user'], server=server)
+
+@app.route('/settings')
+@login_required
+def settings():
+    return render_template('settings.html', user=session['user'])
+
+@app.route('/logout')
+def logout():
+    session.pop('user', None)
+    return redirect(url_for('login'))
+
+@app.route('/create_server', methods=['POST'])
+@login_required
+def create_server():
+    user_id = session['user']['id']
+    server_name = request.form.get('server_name')
+    if server_name:
+        server_id = add_user_server(user_id, server_name)
+    return redirect(url_for('servers'))
 
 @app.route('/server/<server_id>/update_settings', methods=['POST'])
 @login_required
@@ -337,16 +408,6 @@ def delete_server_route(server_id):
     user_id = session['user']['id']
     delete_server(user_id, server_id)
     return redirect(url_for('servers'))
-
-@app.route('/settings')
-@login_required
-def settings():
-    return render_template('settings.html', user=session['user'])
-
-@app.route('/logout')
-def logout():
-    session.pop('user', None)
-    return redirect(url_for('login'))
 
 @app.route('/execute',methods=['POST','GET'])
 @login_required

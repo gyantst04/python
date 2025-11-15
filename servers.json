@@ -3,10 +3,24 @@
     "c019e764-e84d-419e-9c58-3954b0fbe712": {
       "id": "c019e764-e84d-419e-9c58-3954b0fbe712",
       "name": "death",
-      "status": "stopped",
-      "startup_file": "",
-      "logs": [],
-      "files": {}
+      "status": "running",
+      "startup_file": "app.py",
+      "logs": [
+        "Starting server death...",
+        "Stopping server death...",
+        "Starting server death...",
+        "Stopping server death...",
+        "Starting server death...",
+        "Executing app.py...",
+        ">>> print('Hello from startup file!')",
+        "Hello from startup file!",
+        "Process finished with exit code 0"
+      ],
+      "files": {
+        "app.py": {
+          "content": "print=\"death\""
+        }
+      }
     }
   }
 }

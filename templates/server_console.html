@@ -207,6 +207,7 @@
             border-radius: 12px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
             overflow: hidden;
+            margin-bottom: 30px;
         }
         
         .console-header {
@@ -306,6 +307,10 @@
             font-family: 'Courier New', monospace;
         }
         
+        .console-input input:focus {
+            outline: none;
+        }
+        
         .console-input button {
             margin-left: 10px;
             padding: 10px 15px;
@@ -318,15 +323,13 @@
         }
         
         .server-info {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
             margin-top: 20px;
-            flex-wrap: wrap;
         }
         
         .info-card {
-            flex: 1;
-            min-width: 200px;
             background: white;
             border-radius: 12px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
@@ -354,6 +357,15 @@
         .info-value {
             color: #333;
             font-weight: 500;
+        }
+        
+        .startup-file-selector {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e1e5eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-top: 10px;
         }
         
         /* Mobile Navigation */
@@ -522,6 +534,10 @@
             .nav-links {
                 justify-content: center;
             }
+            
+            .server-info {
+                grid-template-columns: 1fr;
+            }
         }
         
         @media (max-width: 480px) {
@@ -612,7 +628,7 @@
             </div>
             
             <div class="console-input">
-                <input type="text" id="consoleInput" placeholder="Enter command..." onkeypress="handleKeyPress(event)">
+                <input type="text" id="consoleInput" placeholder="Enter command... (e.g., python app.py, ls, clear)" onkeypress="handleKeyPress(event)">
                 <button onclick="sendCommand()">Send</button>
             </div>
         </div>
@@ -649,8 +665,13 @@
                     <a href="/server/{{ server.id }}/settings" class="info-value" style="text-decoration: none; color: #3498db;">Configure</a>
                 </div>
                 <div class="info-item">
-                    <span class="info-label">Server Logs:</span>
-                    <span class="info-value">Enabled</span>
+                    <span class="info-label">Startup File:</span>
+                    <select class="startup-file-selector" onchange="setStartupFile(this.value)">
+                        <option value="">Select startup file</option>
+                        {% for file_name in server.files %}
+                        <option value="{{ file_name }}" {{ 'selected' if file_name == server.startup_file else '' }}>{{ file_name }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
             </div>
         </div>
@@ -695,25 +716,76 @@
         });
         
         function startServer() {
-            // In a real implementation, this would make an AJAX request to start the server
-            alert('Server would start in a real implementation');
-            
-            // Update button states
-            document.getElementById('startBtn').disabled = true;
-            document.getElementById('stopBtn').disabled = false;
+            fetch(`/server/{{ server.id }}/start`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Update button states
+                    document.getElementById('startBtn').disabled = true;
+                    document.getElementById('stopBtn').disabled = false;
+                    
+                    // Refresh logs
+                    refreshLogs();
+                } else {
+                    alert('Error starting server.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error starting server.');
+            });
         }
         
         function stopServer() {
-            // In a real implementation, this would make an AJAX request to stop the server
-            alert('Server would stop in a real implementation');
-            
-            // Update button states
-            document.getElementById('startBtn').disabled = false;
-            document.getElementById('stopBtn').disabled = true;
+            fetch(`/server/{{ server.id }}/stop`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Update button states
+                    document.getElementById('startBtn').disabled = false;
+                    document.getElementById('stopBtn').disabled = true;
+                    
+                    // Refresh logs
+                    refreshLogs();
+                } else {
+                    alert('Error stopping server.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error stopping server.');
+            });
         }
         
         function clearConsole() {
-            document.getElementById('consoleOutput').innerHTML = '';
+            fetch(`/server/{{ server.id }}/clear_logs`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    updateConsole(data.logs);
+                } else {
+                    alert('Error clearing console.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error clearing console.');
+            });
         }
         
         function sendCommand() {
@@ -721,24 +793,26 @@
             const command = input.value.trim();
             
             if (command) {
-                // Add command to console
-                const consoleOutput = document.getElementById('consoleOutput');
-                const entry = document.createElement('div');
-                entry.className = 'log-entry';
-                entry.innerHTML = `<span class="log-timestamp">[now]</span> <span class="log-message">$ ${command}</span>`;
-                consoleOutput.appendChild(entry);
-                
-                // Add response (simulated)
-                const response = document.createElement('div');
-                response.className = 'log-entry';
-                response.innerHTML = `<span class="log-timestamp">[now]</span> <span class="log-message">Command executed: ${command}</span>`;
-                consoleOutput.appendChild(response);
-                
-                // Scroll to bottom
-                consoleOutput.scrollTop = consoleOutput.scrollHeight;
-                
-                // Clear input
-                input.value = '';
+                fetch(`/server/{{ server.id }}/execute`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `command=${encodeURIComponent(command)}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        updateConsole(data.logs);
+                        input.value = '';
+                    } else {
+                        alert('Error executing command.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error executing command.');
+                });
             }
         }
         
@@ -746,6 +820,32 @@
             if (event.key === 'Enter') {
                 sendCommand();
             }
+        }
+        
+        function setStartupFile(filename) {
+            // In a real implementation, this would make an AJAX request to update the startup file
+            alert(`Startup file would be set to "${filename}" in a real implementation`);
+        }
+        
+        function refreshLogs() {
+            // In a real implementation, this would fetch the latest logs from the server
+            // For now, we'll just reload the page to show updated status
+            location.reload();
+        }
+        
+        function updateConsole(logs) {
+            const consoleOutput = document.getElementById('consoleOutput');
+            consoleOutput.innerHTML = '';
+            
+            logs.forEach(log => {
+                const entry = document.createElement('div');
+                entry.className = 'log-entry';
+                entry.innerHTML = `<span class="log-timestamp">[${new Date().toLocaleTimeString()}]</span> <span class="log-message">${log}</span>`;
+                consoleOutput.appendChild(entry);
+            });
+            
+            // Scroll to bottom
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
         }
         
         // Auto-scroll to bottom of console
