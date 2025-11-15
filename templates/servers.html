@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Settings - Online Code Editor</title>
+    <title>Servers - Online Code Editor</title>
     <style>
         * {
             margin: 0;
@@ -140,162 +140,253 @@
             border: 2px solid transparent;
         }
         
-        .settings-container {
+        .page-header {
             display: flex;
-            gap: 25px;
-            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
         }
         
-        .settings-sidebar {
-            flex: 1;
-            min-width: 250px;
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            align-self: flex-start;
-            position: sticky;
-            top: 90px;
-        }
-        
-        .settings-sidebar h3 {
+        .page-title {
             color: #3498db;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #f0f0f0;
+            font-size: 2rem;
+            margin: 0;
         }
         
-        .settings-menu {
-            list-style: none;
-        }
-        
-        .settings-menu li {
-            margin-bottom: 10px;
-        }
-        
-        .settings-menu a {
-            text-decoration: none;
-            color: #555;
-            padding: 12px 15px;
-            border-radius: 8px;
-            display: block;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-        
-        .settings-menu a:hover {
-            background-color: #f8f9fa;
-            color: #3498db;
-        }
-        
-        .settings-menu a.active {
+        .create-server-btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
         }
         
-        .settings-content {
-            flex: 3;
-            min-width: 300px;
+        .create-server-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .servers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .server-card {
             background: white;
-            padding: 30px;
             border-radius: 12px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
         
-        .settings-content h2 {
-            color: #3498db;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #f0f0f0;
+        .server-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
         }
         
-        .setting-group {
-            margin-bottom: 40px;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .setting-group h3 {
-            color: #333;
+        .server-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 20px;
+        }
+        
+        .server-name {
+            font-size: 1.4rem;
+            color: #333;
+            margin: 0;
+        }
+        
+        .server-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .status-running {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: #27ae60;
+        }
+        
+        .status-stopped {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: #c0392b;
+        }
+        
+        .server-details {
+            margin-bottom: 20px;
+        }
+        
+        .server-detail {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
             padding-bottom: 10px;
             border-bottom: 1px solid #eee;
         }
         
-        .form-group {
+        .detail-label {
+            color: #7f8c8d;
+        }
+        
+        .detail-value {
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .server-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .manage-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .manage-btn:hover {
+            opacity: 0.9;
+        }
+        
+        .no-servers {
+            text-align: center;
+            padding: 50px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .no-servers h3 {
+            color: #3498db;
+            margin-bottom: 15px;
+        }
+        
+        .no-servers p {
+            color: #7f8c8d;
             margin-bottom: 25px;
+        }
+        
+        /* Create Server Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #95a5a6;
+        }
+        
+        .modal-title {
+            color: #3498db;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
         }
         
         .form-group label {
             display: block;
             margin-bottom: 8px;
-            font-weight: 600;
+            font-weight: 500;
             color: #333;
-            font-size: 1.05rem;
         }
         
-        .form-group input, .form-group select, .form-group textarea {
+        .form-group input {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             border: 2px solid #e1e5eb;
             border-radius: 8px;
             font-size: 1rem;
             transition: border-color 0.3s ease;
-            background-color: #fafbfc;
         }
         
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+        .form-group input:focus {
             outline: none;
             border-color: #3498db;
-            background-color: white;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
         }
         
-        .form-group input:read-only {
-            background-color: #f8f9fa;
-            cursor: not-allowed;
+        .modal-actions {
+            display: flex;
+            gap: 10px;
         }
         
-        .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 14px 30px;
-            text-decoration: none;
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
             border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.3s ease;
             border: none;
             cursor: pointer;
-            font-size: 1.05rem;
-            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+            font-weight: 600;
+            transition: all 0.3s ease;
         }
         
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(102, 126, 234, 0.4);
+        .cancel-btn {
+            background-color: #ecf0f1;
+            color: #333;
         }
         
-        .btn:active {
-            transform: translateY(0);
+        .cancel-btn:hover {
+            background-color: #d5dbdb;
         }
         
-        .btn-danger {
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-            box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
         }
         
-        .btn-danger:hover {
-            box-shadow: 0 6px 15px rgba(231, 76, 60, 0.4);
-        }
-        
-        .btn-block {
-            display: block;
-            text-align: center;
-            width: 100%;
+        .submit-btn:hover {
+            opacity: 0.9;
         }
         
         /* Mobile Navigation */
@@ -444,17 +535,10 @@
                 padding: 0 15px;
             }
             
-            .settings-container {
+            .page-header {
                 flex-direction: column;
-            }
-            
-            .settings-sidebar {
-                position: static;
-                width: 100%;
-            }
-            
-            .settings-content {
-                padding: 20px;
+                gap: 15px;
+                align-items: flex-start;
             }
             
             .nav-links {
@@ -471,13 +555,12 @@
                 font-size: 1.3rem;
             }
             
-            .settings-content {
-                padding: 15px;
+            .server-actions {
+                flex-direction: column;
             }
             
-            .form-group input, .form-group select, .form-group textarea {
-                padding: 12px;
-                font-size: 0.95rem;
+            .modal-content {
+                padding: 20px;
             }
         }
     </style>
@@ -503,90 +586,70 @@
         <div class="navigation">
             <div class="nav-links">
                 <a href="/dashboard" class="nav-link">Dashboard</a>
-                <a href="/servers" class="nav-link">Servers</a>
-                <a href="/settings" class="nav-link active">Settings</a>
+                <a href="/servers" class="nav-link active">Servers</a>
+                <a href="/settings" class="nav-link">Settings</a>
             </div>
         </div>
         
-        <div class="settings-container">
-            <div class="settings-sidebar">
-                <h3>Settings Menu</h3>
-                <ul class="settings-menu">
-                    <li><a href="#profile" class="active">Profile Settings</a></li>
-                    <li><a href="#account">Account Settings</a></li>
-                    <li><a href="#preferences">Preferences</a></li>
-                    <li><a href="#security">Security</a></li>
-                </ul>
+        <div class="page-header">
+            <h1 class="page-title">Your Servers</h1>
+            <button class="create-server-btn" onclick="openCreateServerModal()">+ Create Server</button>
+        </div>
+        
+        {% if servers %}
+        <div class="servers-grid">
+            {% for server_id, server in servers.items() %}
+            <div class="server-card">
+                <div class="server-header">
+                    <h3 class="server-name">{{ server.name }}</h3>
+                    <span class="server-status status-{{ server.status }}">{{ server.status }}</span>
+                </div>
+                
+                <div class="server-details">
+                    <div class="server-detail">
+                        <span class="detail-label">Server ID:</span>
+                        <span class="detail-value">{{ server.id[:8] }}</span>
+                    </div>
+                    <div class="server-detail">
+                        <span class="detail-label">Startup File:</span>
+                        <span class="detail-value">{{ server.startup_file or 'Not set' }}</span>
+                    </div>
+                    <div class="server-detail">
+                        <span class="detail-label">Files:</span>
+                        <span class="detail-value">{{ server.files|length }}</span>
+                    </div>
+                </div>
+                
+                <div class="server-actions">
+                    <a href="/server/{{ server_id }}" class="action-btn manage-btn">Manage</a>
+                </div>
             </div>
-            
-            <div class="settings-content">
-                <h2>Settings</h2>
-                
-                <div class="setting-group">
-                    <h3 id="profile">Profile Settings</h3>
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" id="username" value="{{ user.username }}" readonly>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="discriminator">Discriminator</label>
-                        <input type="text" id="discriminator" value="{{ user.discriminator }}" readonly>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="user-id">User ID</label>
-                        <input type="text" id="user-id" value="{{ user.id }}" readonly>
-                    </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-servers">
+            <h3>No Servers Found</h3>
+            <p>You haven't created any servers yet. Create your first server to get started.</p>
+            <button class="create-server-btn" onclick="openCreateServerModal()">+ Create Server</button>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Create Server Modal -->
+    <div class="modal" id="createServerModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeCreateServerModal()">&times;</button>
+            <h2 class="modal-title">Create New Server</h2>
+            <form id="createServerForm" action="/create_server" method="POST">
+                <div class="form-group">
+                    <label for="serverName">Server Name</label>
+                    <input type="text" id="serverName" name="server_name" placeholder="Enter server name" required>
                 </div>
-                
-                <div class="setting-group">
-                    <h3 id="account">Account Settings</h3>
-                    <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input type="email" id="email" placeholder="Enter your email address">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="timezone">Timezone</label>
-                        <select id="timezone">
-                            <option value="utc">UTC</option>
-                            <option value="est">EST</option>
-                            <option value="pst">PST</option>
-                            <option value="cet">CET</option>
-                        </select>
-                    </div>
+                <div class="modal-actions">
+                    <button type="button" class="modal-btn cancel-btn" onclick="closeCreateServerModal()">Cancel</button>
+                    <button type="submit" class="modal-btn submit-btn">Create Server</button>
                 </div>
-                
-                <div class="setting-group">
-                    <h3 id="preferences">Preferences</h3>
-                    <div class="form-group">
-                        <label for="theme">Editor Theme</label>
-                        <select id="theme">
-                            <option value="light">Light</option>
-                            <option value="dark">Dark</option>
-                            <option value="monokai">Monokai</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="language">Default Language</label>
-                        <select id="language">
-                            <option value="python">Python</option>
-                            <option value="javascript">JavaScript</option>
-                            <option value="cpp">C++</option>
-                            <option value="php">PHP</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="setting-group">
-                    <h3 id="security">Security</h3>
-                    <button class="btn btn-danger btn-block">Delete Account</button>
-                </div>
-                
-                <button class="btn">Save Changes</button>
-            </div>
+            </form>
         </div>
     </div>
     
@@ -596,8 +659,8 @@
             <button class="close-mobile-nav" onclick="toggleMobileNav()">×</button>
             <ul class="mobile-nav-links">
                 <li><a href="/dashboard">Dashboard</a></li>
-                <li><a href="/servers">Servers</a></li>
-                <li><a href="/settings" class="active">Settings</a></li>
+                <li><a href="/servers" class="active">Servers</a></li>
+                <li><a href="/settings">Settings</a></li>
             </ul>
             
             <div class="mobile-user-info">
@@ -625,6 +688,25 @@
                 !mobileNav.contains(event.target) && 
                 !event.target.closest('.mobile-menu-btn')) {
                 toggleMobileNav();
+            }
+        });
+        
+        function openCreateServerModal() {
+            document.getElementById('createServerModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeCreateServerModal() {
+            document.getElementById('createServerModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Close modal when clicking outside
+        document.addEventListener('click', function(event) {
+            const modal = document.getElementById('createServerModal');
+            if (modal.classList.contains('active') && 
+                event.target === modal) {
+                closeCreateServerModal();
             }
         });
     </script>

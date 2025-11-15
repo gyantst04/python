@@ -169,40 +169,42 @@
             margin: 0 auto;
         }
         
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
+        .dashboard-actions {
             margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
         }
         
-        .feature-card {
+        .action-card {
             background: white;
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
             text-align: center;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            width: 250px;
         }
         
-        .feature-card:hover {
+        .action-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
         }
         
-        .feature-icon {
+        .action-icon {
             font-size: 3rem;
             margin-bottom: 20px;
             color: #3498db;
         }
         
-        .feature-card h3 {
+        .action-card h3 {
             color: #333;
             margin-bottom: 15px;
             font-size: 1.4rem;
         }
         
-        .feature-card p {
+        .action-card p {
             color: #666;
             line-height: 1.6;
             margin-bottom: 20px;
@@ -390,9 +392,9 @@
                 justify-content: center;
             }
             
-            .nav-link {
-                padding: 10px 20px;
-                font-size: 0.9rem;
+            .dashboard-actions {
+                flex-direction: column;
+                align-items: center;
             }
         }
         
@@ -415,14 +417,6 @@
             
             .welcome p {
                 font-size: 1rem;
-            }
-            
-            .feature-card {
-                padding: 20px;
-            }
-            
-            .feature-icon {
-                font-size: 2.5rem;
             }
         }
     </style>
@@ -448,6 +442,7 @@
         <div class="navigation">
             <div class="nav-links">
                 <a href="/dashboard" class="nav-link active">Dashboard</a>
+                <a href="/servers" class="nav-link">Servers</a>
                 <a href="/settings" class="nav-link">Settings</a>
             </div>
         </div>
@@ -455,6 +450,22 @@
         <div class="welcome">
             <h1>Welcome back, {{ user.username }}!</h1>
             <p>You're logged in with your Discord account. You can now access all features of the Online Code Editor.</p>
+            
+            <div class="dashboard-actions">
+                <div class="action-card">
+                    <div class="action-icon">💻</div>
+                    <h3>Server Management</h3>
+                    <p>Create and manage your own servers with file management, console access, and settings.</p>
+                    <a href="/servers" class="btn">Manage Servers</a>
+                </div>
+                
+                <div class="action-card">
+                    <div class="action-icon">⚙️</div>
+                    <h3>Settings</h3>
+                    <p>Customize your experience with personalized settings and preferences.</p>
+                    <a href="/settings" class="btn">Manage Settings</a>
+                </div>
+            </div>
         </div>
     </div>
     
@@ -464,6 +475,7 @@
             <button class="close-mobile-nav" onclick="toggleMobileNav()">×</button>
             <ul class="mobile-nav-links">
                 <li><a href="/dashboard" class="active">Dashboard</a></li>
+                <li><a href="/servers">Servers</a></li>
                 <li><a href="/settings">Settings</a></li>
             </ul>
             

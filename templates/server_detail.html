@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Settings - Online Code Editor</title>
+    <title>{{ server.name }} - Online Code Editor</title>
     <style>
         * {
             margin: 0;
@@ -140,162 +140,154 @@
             border: 2px solid transparent;
         }
         
-        .settings-container {
+        .server-header {
             display: flex;
-            gap: 25px;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .server-title {
+            color: #3498db;
+            margin: 0;
+        }
+        
+        .server-status {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .status-running {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: #27ae60;
+        }
+        
+        .status-stopped {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: #c0392b;
+        }
+        
+        .server-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
             flex-wrap: wrap;
         }
         
-        .settings-sidebar {
-            flex: 1;
-            min-width: 250px;
+        .tab {
+            text-decoration: none;
+            color: #3498db;
+            padding: 12px 25px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            border: 2px solid transparent;
             background: white;
-            padding: 25px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .tab:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: 2px solid transparent;
+        }
+        
+        .server-info {
+            background: white;
             border-radius: 12px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            align-self: flex-start;
-            position: sticky;
-            top: 90px;
+            padding: 30px;
+            margin-bottom: 30px;
         }
         
-        .settings-sidebar h3 {
-            color: #3498db;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #f0f0f0;
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
         }
         
-        .settings-menu {
-            list-style: none;
-        }
-        
-        .settings-menu li {
-            margin-bottom: 10px;
-        }
-        
-        .settings-menu a {
-            text-decoration: none;
-            color: #555;
-            padding: 12px 15px;
+        .info-item {
+            padding: 20px;
             border-radius: 8px;
-            display: block;
-            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        
+        .info-label {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+        
+        .info-value {
+            color: #333;
+            font-size: 1.1rem;
             font-weight: 500;
         }
         
-        .settings-menu a:hover {
-            background-color: #f8f9fa;
-            color: #3498db;
+        .quick-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
         }
         
-        .settings-menu a.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        
-        .settings-content {
-            flex: 3;
-            min-width: 300px;
+        .action-card {
+            flex: 1;
+            min-width: 200px;
             background: white;
-            padding: 30px;
             border-radius: 12px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            text-align: center;
+            transition: transform 0.3s ease;
         }
         
-        .settings-content h2 {
-            color: #3498db;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #f0f0f0;
+        .action-card:hover {
+            transform: translateY(-5px);
         }
         
-        .setting-group {
-            margin-bottom: 40px;
-            animation: fadeIn 0.5s ease;
+        .action-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .setting-group h3 {
+        .action-title {
             color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .action-desc {
+            color: #7f8c8d;
+            font-size: 0.9rem;
             margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
         }
         
-        .form-group {
-            margin-bottom: 25px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-            font-size: 1.05rem;
-        }
-        
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%;
-            padding: 14px;
-            border: 2px solid #e1e5eb;
+        .action-btn {
+            display: inline-block;
+            padding: 10px 20px;
             border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
-            background-color: #fafbfc;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
         }
         
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-            outline: none;
-            border-color: #3498db;
-            background-color: white;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-        }
-        
-        .form-group input:read-only {
-            background-color: #f8f9fa;
-            cursor: not-allowed;
-        }
-        
-        .btn {
+        .primary-btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 14px 30px;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-            font-size: 1.05rem;
-            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
         }
         
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(102, 126, 234, 0.4);
-        }
-        
-        .btn:active {
-            transform: translateY(0);
-        }
-        
-        .btn-danger {
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-            box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
-        }
-        
-        .btn-danger:hover {
-            box-shadow: 0 6px 15px rgba(231, 76, 60, 0.4);
-        }
-        
-        .btn-block {
-            display: block;
-            text-align: center;
-            width: 100%;
+        .secondary-btn {
+            background: #ecf0f1;
+            color: #333;
         }
         
         /* Mobile Navigation */
@@ -444,21 +436,18 @@
                 padding: 0 15px;
             }
             
-            .settings-container {
+            .server-header {
                 flex-direction: column;
-            }
-            
-            .settings-sidebar {
-                position: static;
-                width: 100%;
-            }
-            
-            .settings-content {
-                padding: 20px;
+                gap: 15px;
+                align-items: flex-start;
             }
             
             .nav-links {
                 justify-content: center;
+            }
+            
+            .quick-actions {
+                flex-direction: column;
             }
         }
         
@@ -471,13 +460,12 @@
                 font-size: 1.3rem;
             }
             
-            .settings-content {
-                padding: 15px;
+            .server-tabs {
+                flex-direction: column;
             }
             
-            .form-group input, .form-group select, .form-group textarea {
-                padding: 12px;
-                font-size: 0.95rem;
+            .tab {
+                text-align: center;
             }
         }
     </style>
@@ -503,89 +491,64 @@
         <div class="navigation">
             <div class="nav-links">
                 <a href="/dashboard" class="nav-link">Dashboard</a>
-                <a href="/servers" class="nav-link">Servers</a>
-                <a href="/settings" class="nav-link active">Settings</a>
+                <a href="/servers" class="nav-link active">Servers</a>
+                <a href="/settings" class="nav-link">Settings</a>
             </div>
         </div>
         
-        <div class="settings-container">
-            <div class="settings-sidebar">
-                <h3>Settings Menu</h3>
-                <ul class="settings-menu">
-                    <li><a href="#profile" class="active">Profile Settings</a></li>
-                    <li><a href="#account">Account Settings</a></li>
-                    <li><a href="#preferences">Preferences</a></li>
-                    <li><a href="#security">Security</a></li>
-                </ul>
+        <div class="server-header">
+            <h1 class="server-title">{{ server.name }}</h1>
+            <span class="server-status status-{{ server.status }}">{{ server.status }}</span>
+        </div>
+        
+        <div class="server-tabs">
+            <a href="/server/{{ server.id }}" class="tab active">Overview</a>
+            <a href="/server/{{ server.id }}/files" class="tab">Files</a>
+            <a href="/server/{{ server.id }}/console" class="tab">Console</a>
+            <a href="/server/{{ server.id }}/settings" class="tab">Settings</a>
+        </div>
+        
+        <div class="server-info">
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Server ID</div>
+                    <div class="info-value">{{ server.id }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Status</div>
+                    <div class="info-value">{{ server.status }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Startup File</div>
+                    <div class="info-value">{{ server.startup_file or 'Not set' }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Files</div>
+                    <div class="info-value">{{ server.files|length }}</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="quick-actions">
+            <div class="action-card">
+                <div class="action-icon">📁</div>
+                <h3 class="action-title">File Management</h3>
+                <p class="action-desc">Manage your server files and upload new ones</p>
+                <a href="/server/{{ server.id }}/files" class="action-btn primary-btn">Manage Files</a>
             </div>
             
-            <div class="settings-content">
-                <h2>Settings</h2>
-                
-                <div class="setting-group">
-                    <h3 id="profile">Profile Settings</h3>
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" id="username" value="{{ user.username }}" readonly>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="discriminator">Discriminator</label>
-                        <input type="text" id="discriminator" value="{{ user.discriminator }}" readonly>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="user-id">User ID</label>
-                        <input type="text" id="user-id" value="{{ user.id }}" readonly>
-                    </div>
-                </div>
-                
-                <div class="setting-group">
-                    <h3 id="account">Account Settings</h3>
-                    <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input type="email" id="email" placeholder="Enter your email address">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="timezone">Timezone</label>
-                        <select id="timezone">
-                            <option value="utc">UTC</option>
-                            <option value="est">EST</option>
-                            <option value="pst">PST</option>
-                            <option value="cet">CET</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="setting-group">
-                    <h3 id="preferences">Preferences</h3>
-                    <div class="form-group">
-                        <label for="theme">Editor Theme</label>
-                        <select id="theme">
-                            <option value="light">Light</option>
-                            <option value="dark">Dark</option>
-                            <option value="monokai">Monokai</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="language">Default Language</label>
-                        <select id="language">
-                            <option value="python">Python</option>
-                            <option value="javascript">JavaScript</option>
-                            <option value="cpp">C++</option>
-                            <option value="php">PHP</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="setting-group">
-                    <h3 id="security">Security</h3>
-                    <button class="btn btn-danger btn-block">Delete Account</button>
-                </div>
-                
-                <button class="btn">Save Changes</button>
+            <div class="action-card">
+                <div class="action-icon">💻</div>
+                <h3 class="action-title">Console</h3>
+                <p class="action-desc">View logs and control your server</p>
+                <a href="/server/{{ server.id }}/console" class="action-btn primary-btn">Open Console</a>
+            </div>
+            
+            <div class="action-card">
+                <div class="action-icon">⚙️</div>
+                <h3 class="action-title">Settings</h3>
+                <p class="action-desc">Configure server name and startup options</p>
+                <a href="/server/{{ server.id }}/settings" class="action-btn primary-btn">Server Settings</a>
             </div>
         </div>
     </div>
@@ -596,8 +559,8 @@
             <button class="close-mobile-nav" onclick="toggleMobileNav()">×</button>
             <ul class="mobile-nav-links">
                 <li><a href="/dashboard">Dashboard</a></li>
-                <li><a href="/servers">Servers</a></li>
-                <li><a href="/settings" class="active">Settings</a></li>
+                <li><a href="/servers" class="active">Servers</a></li>
+                <li><a href="/settings">Settings</a></li>
             </ul>
             
             <div class="mobile-user-info">

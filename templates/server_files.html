@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Settings - Online Code Editor</title>
+    <title>{{ server.name }} - Files - Online Code Editor</title>
     <style>
         * {
             margin: 0;
@@ -140,162 +140,280 @@
             border: 2px solid transparent;
         }
         
-        .settings-container {
+        .server-header {
             display: flex;
-            gap: 25px;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .server-title {
+            color: #3498db;
+            margin: 0;
+        }
+        
+        .server-status {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .status-running {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: #27ae60;
+        }
+        
+        .status-stopped {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: #c0392b;
+        }
+        
+        .server-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
             flex-wrap: wrap;
         }
         
-        .settings-sidebar {
-            flex: 1;
-            min-width: 250px;
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            align-self: flex-start;
-            position: sticky;
-            top: 90px;
-        }
-        
-        .settings-sidebar h3 {
-            color: #3498db;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #f0f0f0;
-        }
-        
-        .settings-menu {
-            list-style: none;
-        }
-        
-        .settings-menu li {
-            margin-bottom: 10px;
-        }
-        
-        .settings-menu a {
+        .tab {
             text-decoration: none;
-            color: #555;
-            padding: 12px 15px;
+            color: #3498db;
+            padding: 12px 25px;
             border-radius: 8px;
-            display: block;
             transition: all 0.3s ease;
             font-weight: 500;
+            border: 2px solid transparent;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
         
-        .settings-menu a:hover {
+        .tab:hover {
             background-color: #f8f9fa;
-            color: #3498db;
         }
         
-        .settings-menu a.active {
+        .tab.active {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: 2px solid transparent;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .page-title {
+            color: #3498db;
+            margin: 0;
+        }
+        
+        .upload-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-btn:hover {
+            opacity: 0.9;
+        }
+        
+        .files-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .file-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .file-card:hover {
+            transform: translateY(-3px);
+        }
+        
+        .file-icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+        
+        .file-name {
+            color: #333;
+            font-weight: 500;
+            margin-bottom: 5px;
+            word-break: break-all;
+        }
+        
+        .file-size {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        
+        .file-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .file-action-btn {
+            flex: 1;
+            padding: 8px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .edit-btn {
+            background: #3498db;
             color: white;
         }
         
-        .settings-content {
-            flex: 3;
-            min-width: 300px;
+        .delete-btn {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .no-files {
+            text-align: center;
+            padding: 50px;
             background: white;
-            padding: 30px;
             border-radius: 12px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
         }
         
-        .settings-content h2 {
+        .no-files h3 {
             color: #3498db;
+            margin-bottom: 15px;
+        }
+        
+        .no-files p {
+            color: #7f8c8d;
             margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #f0f0f0;
         }
         
-        .setting-group {
-            margin-bottom: 40px;
-            animation: fadeIn 0.5s ease;
+        /* Upload Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .modal.active {
+            display: flex;
         }
         
-        .setting-group h3 {
-            color: #333;
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #95a5a6;
+        }
+        
+        .modal-title {
+            color: #3498db;
             margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
+            text-align: center;
         }
         
         .form-group {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
         
         .form-group label {
             display: block;
             margin-bottom: 8px;
-            font-weight: 600;
+            font-weight: 500;
             color: #333;
-            font-size: 1.05rem;
         }
         
-        .form-group input, .form-group select, .form-group textarea {
+        .form-group input, .form-group textarea {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             border: 2px solid #e1e5eb;
             border-radius: 8px;
             font-size: 1rem;
             transition: border-color 0.3s ease;
-            background-color: #fafbfc;
         }
         
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+        .form-group input:focus, .form-group textarea:focus {
             outline: none;
             border-color: #3498db;
-            background-color: white;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
         }
         
-        .form-group input:read-only {
-            background-color: #f8f9fa;
-            cursor: not-allowed;
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
         }
         
-        .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 14px 30px;
-            text-decoration: none;
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
             border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.3s ease;
             border: none;
             cursor: pointer;
-            font-size: 1.05rem;
-            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+            font-weight: 600;
+            transition: all 0.3s ease;
         }
         
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(102, 126, 234, 0.4);
+        .cancel-btn {
+            background-color: #ecf0f1;
+            color: #333;
         }
         
-        .btn:active {
-            transform: translateY(0);
+        .cancel-btn:hover {
+            background-color: #d5dbdb;
         }
         
-        .btn-danger {
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-            box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
         }
         
-        .btn-danger:hover {
-            box-shadow: 0 6px 15px rgba(231, 76, 60, 0.4);
-        }
-        
-        .btn-block {
-            display: block;
-            text-align: center;
-            width: 100%;
+        .submit-btn:hover {
+            opacity: 0.9;
         }
         
         /* Mobile Navigation */
@@ -444,21 +562,24 @@
                 padding: 0 15px;
             }
             
-            .settings-container {
+            .server-header {
                 flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
             }
             
-            .settings-sidebar {
-                position: static;
-                width: 100%;
-            }
-            
-            .settings-content {
-                padding: 20px;
+            .page-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
             }
             
             .nav-links {
                 justify-content: center;
+            }
+            
+            .file-actions {
+                flex-direction: column;
             }
         }
         
@@ -471,13 +592,16 @@
                 font-size: 1.3rem;
             }
             
-            .settings-content {
-                padding: 15px;
+            .server-tabs {
+                flex-direction: column;
             }
             
-            .form-group input, .form-group select, .form-group textarea {
-                padding: 12px;
-                font-size: 0.95rem;
+            .tab {
+                text-align: center;
+            }
+            
+            .modal-content {
+                padding: 20px;
             }
         }
     </style>
@@ -504,89 +628,69 @@
             <div class="nav-links">
                 <a href="/dashboard" class="nav-link">Dashboard</a>
                 <a href="/servers" class="nav-link">Servers</a>
-                <a href="/settings" class="nav-link active">Settings</a>
+                <a href="/settings" class="nav-link">Settings</a>
             </div>
         </div>
         
-        <div class="settings-container">
-            <div class="settings-sidebar">
-                <h3>Settings Menu</h3>
-                <ul class="settings-menu">
-                    <li><a href="#profile" class="active">Profile Settings</a></li>
-                    <li><a href="#account">Account Settings</a></li>
-                    <li><a href="#preferences">Preferences</a></li>
-                    <li><a href="#security">Security</a></li>
-                </ul>
+        <div class="server-header">
+            <h1 class="server-title">{{ server.name }}</h1>
+            <span class="server-status status-{{ server.status }}">{{ server.status }}</span>
+        </div>
+        
+        <div class="server-tabs">
+            <a href="/server/{{ server.id }}" class="tab">Overview</a>
+            <a href="/server/{{ server.id }}/files" class="tab active">Files</a>
+            <a href="/server/{{ server.id }}/console" class="tab">Console</a>
+            <a href="/server/{{ server.id }}/settings" class="tab">Settings</a>
+        </div>
+        
+        <div class="page-header">
+            <h2 class="page-title">File Management</h2>
+            <button class="upload-btn" onclick="openUploadModal()">+ Upload File</button>
+        </div>
+        
+        {% if server.files %}
+        <div class="files-grid">
+            {% for file_name, file_data in server.files.items() %}
+            <div class="file-card">
+                <div class="file-icon">📄</div>
+                <div class="file-name">{{ file_name }}</div>
+                <div class="file-size">{{ file_data.content|length }} bytes</div>
+                <div class="file-actions">
+                    <button class="file-action-btn edit-btn" onclick="editFile('{{ file_name }}')">Edit</button>
+                    <button class="file-action-btn delete-btn" onclick="deleteFile('{{ file_name }}')">Delete</button>
+                </div>
             </div>
-            
-            <div class="settings-content">
-                <h2>Settings</h2>
-                
-                <div class="setting-group">
-                    <h3 id="profile">Profile Settings</h3>
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" id="username" value="{{ user.username }}" readonly>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="discriminator">Discriminator</label>
-                        <input type="text" id="discriminator" value="{{ user.discriminator }}" readonly>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="user-id">User ID</label>
-                        <input type="text" id="user-id" value="{{ user.id }}" readonly>
-                    </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-files">
+            <h3>No Files Found</h3>
+            <p>This server doesn't have any files yet. Upload your first file to get started.</p>
+            <button class="upload-btn" onclick="openUploadModal()">+ Upload File</button>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Upload File Modal -->
+    <div class="modal" id="uploadModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeUploadModal()">&times;</button>
+            <h2 class="modal-title">Upload New File</h2>
+            <form id="uploadForm">
+                <div class="form-group">
+                    <label for="fileName">File Name</label>
+                    <input type="text" id="fileName" name="file_name" placeholder="Enter file name (e.g., app.py)" required>
                 </div>
-                
-                <div class="setting-group">
-                    <h3 id="account">Account Settings</h3>
-                    <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input type="email" id="email" placeholder="Enter your email address">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="timezone">Timezone</label>
-                        <select id="timezone">
-                            <option value="utc">UTC</option>
-                            <option value="est">EST</option>
-                            <option value="pst">PST</option>
-                            <option value="cet">CET</option>
-                        </select>
-                    </div>
+                <div class="form-group">
+                    <label for="fileContent">File Content</label>
+                    <textarea id="fileContent" name="file_content" placeholder="Enter file content"></textarea>
                 </div>
-                
-                <div class="setting-group">
-                    <h3 id="preferences">Preferences</h3>
-                    <div class="form-group">
-                        <label for="theme">Editor Theme</label>
-                        <select id="theme">
-                            <option value="light">Light</option>
-                            <option value="dark">Dark</option>
-                            <option value="monokai">Monokai</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="language">Default Language</label>
-                        <select id="language">
-                            <option value="python">Python</option>
-                            <option value="javascript">JavaScript</option>
-                            <option value="cpp">C++</option>
-                            <option value="php">PHP</option>
-                        </select>
-                    </div>
+                <div class="modal-actions">
+                    <button type="button" class="modal-btn cancel-btn" onclick="closeUploadModal()">Cancel</button>
+                    <button type="button" class="modal-btn submit-btn" onclick="uploadFile()">Upload File</button>
                 </div>
-                
-                <div class="setting-group">
-                    <h3 id="security">Security</h3>
-                    <button class="btn btn-danger btn-block">Delete Account</button>
-                </div>
-                
-                <button class="btn">Save Changes</button>
-            </div>
+            </form>
         </div>
     </div>
     
@@ -597,7 +701,7 @@
             <ul class="mobile-nav-links">
                 <li><a href="/dashboard">Dashboard</a></li>
                 <li><a href="/servers">Servers</a></li>
-                <li><a href="/settings" class="active">Settings</a></li>
+                <li><a href="/settings">Settings</a></li>
             </ul>
             
             <div class="mobile-user-info">
@@ -627,6 +731,55 @@
                 toggleMobileNav();
             }
         });
+        
+        function openUploadModal() {
+            document.getElementById('uploadModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeUploadModal() {
+            document.getElementById('uploadModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Close modal when clicking outside
+        document.addEventListener('click', function(event) {
+            const modal = document.getElementById('uploadModal');
+            if (modal.classList.contains('active') && 
+                event.target === modal) {
+                closeUploadModal();
+            }
+        });
+        
+        function uploadFile() {
+            const fileName = document.getElementById('fileName').value;
+            const fileContent = document.getElementById('fileContent').value;
+            
+            if (!fileName) {
+                alert('Please enter a file name');
+                return;
+            }
+            
+            // In a real implementation, this would make an AJAX request to upload the file
+            alert(`File "${fileName}" would be uploaded in a real implementation`);
+            closeUploadModal();
+            
+            // Reset form
+            document.getElementById('fileName').value = '';
+            document.getElementById('fileContent').value = '';
+        }
+        
+        function editFile(fileName) {
+            // In a real implementation, this would open an editor for the file
+            alert(`Editing file "${fileName}" would open in a real implementation`);
+        }
+        
+        function deleteFile(fileName) {
+            if (confirm(`Are you sure you want to delete "${fileName}"?`)) {
+                // In a real implementation, this would make an AJAX request to delete the file
+                alert(`File "${fileName}" would be deleted in a real implementation`);
+            }
+        }
     </script>
 </body>
 </html>

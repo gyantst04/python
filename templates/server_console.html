@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Settings - Online Code Editor</title>
+    <title>{{ server.name }} - Console - Online Code Editor</title>
     <style>
         * {
             margin: 0;
@@ -140,162 +140,220 @@
             border: 2px solid transparent;
         }
         
-        .settings-container {
+        .server-header {
             display: flex;
-            gap: 25px;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .server-title {
+            color: #3498db;
+            margin: 0;
+        }
+        
+        .server-status {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .status-running {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: #27ae60;
+        }
+        
+        .status-stopped {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: #c0392b;
+        }
+        
+        .server-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
             flex-wrap: wrap;
         }
         
-        .settings-sidebar {
-            flex: 1;
-            min-width: 250px;
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            align-self: flex-start;
-            position: sticky;
-            top: 90px;
-        }
-        
-        .settings-sidebar h3 {
-            color: #3498db;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #f0f0f0;
-        }
-        
-        .settings-menu {
-            list-style: none;
-        }
-        
-        .settings-menu li {
-            margin-bottom: 10px;
-        }
-        
-        .settings-menu a {
+        .tab {
             text-decoration: none;
-            color: #555;
-            padding: 12px 15px;
+            color: #3498db;
+            padding: 12px 25px;
             border-radius: 8px;
-            display: block;
             transition: all 0.3s ease;
             font-weight: 500;
+            border: 2px solid transparent;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
         
-        .settings-menu a:hover {
+        .tab:hover {
             background-color: #f8f9fa;
-            color: #3498db;
         }
         
-        .settings-menu a.active {
+        .tab.active {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: 2px solid transparent;
+        }
+        
+        .console-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        
+        .console-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: #2c3e50;
             color: white;
         }
         
-        .settings-content {
-            flex: 3;
-            min-width: 300px;
+        .console-title {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+        
+        .console-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .console-btn {
+            padding: 8px 15px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .start-btn {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .stop-btn {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .clear-btn {
+            background: #3498db;
+            color: white;
+        }
+        
+        .console-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .console-output {
+            height: 400px;
+            overflow-y: auto;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .log-entry {
+            margin-bottom: 8px;
+            word-break: break-word;
+        }
+        
+        .log-timestamp {
+            color: #569cd6;
+        }
+        
+        .log-message {
+            color: #d4d4d4;
+        }
+        
+        .log-error {
+            color: #f48771;
+        }
+        
+        .log-info {
+            color: #4ec9b0;
+        }
+        
+        .console-input {
+            display: flex;
+            padding: 15px;
+            background: #2c3e50;
+            border-top: 1px solid #34495e;
+        }
+        
+        .console-input input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .console-input button {
+            margin-left: 10px;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            background: #3498db;
+            color: white;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .server-info {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .info-card {
+            flex: 1;
+            min-width: 200px;
             background: white;
-            padding: 30px;
             border-radius: 12px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            padding: 20px;
         }
         
-        .settings-content h2 {
+        .info-card h3 {
             color: #3498db;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #f0f0f0;
+            margin-top: 0;
+            margin-bottom: 15px;
         }
         
-        .setting-group {
-            margin-bottom: 40px;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .setting-group h3 {
-            color: #333;
-            margin-bottom: 20px;
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
             padding-bottom: 10px;
             border-bottom: 1px solid #eee;
         }
         
-        .form-group {
-            margin-bottom: 25px;
+        .info-label {
+            color: #7f8c8d;
         }
         
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
+        .info-value {
             color: #333;
-            font-size: 1.05rem;
-        }
-        
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%;
-            padding: 14px;
-            border: 2px solid #e1e5eb;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
-            background-color: #fafbfc;
-        }
-        
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-            outline: none;
-            border-color: #3498db;
-            background-color: white;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-        }
-        
-        .form-group input:read-only {
-            background-color: #f8f9fa;
-            cursor: not-allowed;
-        }
-        
-        .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 14px 30px;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-            font-size: 1.05rem;
-            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
-        }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(102, 126, 234, 0.4);
-        }
-        
-        .btn:active {
-            transform: translateY(0);
-        }
-        
-        .btn-danger {
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-            box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
-        }
-        
-        .btn-danger:hover {
-            box-shadow: 0 6px 15px rgba(231, 76, 60, 0.4);
-        }
-        
-        .btn-block {
-            display: block;
-            text-align: center;
-            width: 100%;
+            font-weight: 500;
         }
         
         /* Mobile Navigation */
@@ -444,17 +502,21 @@
                 padding: 0 15px;
             }
             
-            .settings-container {
+            .server-header {
                 flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
             }
             
-            .settings-sidebar {
-                position: static;
+            .console-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            
+            .console-actions {
                 width: 100%;
-            }
-            
-            .settings-content {
-                padding: 20px;
+                justify-content: space-between;
             }
             
             .nav-links {
@@ -471,13 +533,16 @@
                 font-size: 1.3rem;
             }
             
-            .settings-content {
-                padding: 15px;
+            .server-tabs {
+                flex-direction: column;
             }
             
-            .form-group input, .form-group select, .form-group textarea {
-                padding: 12px;
-                font-size: 0.95rem;
+            .tab {
+                text-align: center;
+            }
+            
+            .console-output {
+                height: 300px;
             }
         }
     </style>
@@ -504,88 +569,89 @@
             <div class="nav-links">
                 <a href="/dashboard" class="nav-link">Dashboard</a>
                 <a href="/servers" class="nav-link">Servers</a>
-                <a href="/settings" class="nav-link active">Settings</a>
+                <a href="/settings" class="nav-link">Settings</a>
             </div>
         </div>
         
-        <div class="settings-container">
-            <div class="settings-sidebar">
-                <h3>Settings Menu</h3>
-                <ul class="settings-menu">
-                    <li><a href="#profile" class="active">Profile Settings</a></li>
-                    <li><a href="#account">Account Settings</a></li>
-                    <li><a href="#preferences">Preferences</a></li>
-                    <li><a href="#security">Security</a></li>
-                </ul>
+        <div class="server-header">
+            <h1 class="server-title">{{ server.name }}</h1>
+            <span class="server-status status-{{ server.status }}">{{ server.status }}</span>
+        </div>
+        
+        <div class="server-tabs">
+            <a href="/server/{{ server.id }}" class="tab">Overview</a>
+            <a href="/server/{{ server.id }}/files" class="tab">Files</a>
+            <a href="/server/{{ server.id }}/console" class="tab active">Console</a>
+            <a href="/server/{{ server.id }}/settings" class="tab">Settings</a>
+        </div>
+        
+        <div class="console-container">
+            <div class="console-header">
+                <h2 class="console-title">Server Console</h2>
+                <div class="console-actions">
+                    <button class="console-btn start-btn" id="startBtn" onclick="startServer()" {{ 'disabled' if server.status == 'running' else '' }}>Start Server</button>
+                    <button class="console-btn stop-btn" id="stopBtn" onclick="stopServer()" {{ 'disabled' if server.status == 'stopped' else '' }}>Stop Server</button>
+                    <button class="console-btn clear-btn" onclick="clearConsole()">Clear Console</button>
+                </div>
             </div>
             
-            <div class="settings-content">
-                <h2>Settings</h2>
-                
-                <div class="setting-group">
-                    <h3 id="profile">Profile Settings</h3>
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" id="username" value="{{ user.username }}" readonly>
+            <div class="console-output" id="consoleOutput">
+                {% if server.logs %}
+                    {% for log in server.logs %}
+                    <div class="log-entry">
+                        <span class="log-timestamp">[{{ "now" | date }}]</span>
+                        <span class="log-message">{{ log }}</span>
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="discriminator">Discriminator</label>
-                        <input type="text" id="discriminator" value="{{ user.discriminator }}" readonly>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="user-id">User ID</label>
-                        <input type="text" id="user-id" value="{{ user.id }}" readonly>
-                    </div>
+                    {% endfor %}
+                {% else %}
+                <div class="log-entry">
+                    <span class="log-timestamp">[{{ "now" | date }}]</span>
+                    <span class="log-info">Console initialized. Server is currently {{ server.status }}.</span>
                 </div>
-                
-                <div class="setting-group">
-                    <h3 id="account">Account Settings</h3>
-                    <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input type="email" id="email" placeholder="Enter your email address">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="timezone">Timezone</label>
-                        <select id="timezone">
-                            <option value="utc">UTC</option>
-                            <option value="est">EST</option>
-                            <option value="pst">PST</option>
-                            <option value="cet">CET</option>
-                        </select>
-                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="console-input">
+                <input type="text" id="consoleInput" placeholder="Enter command..." onkeypress="handleKeyPress(event)">
+                <button onclick="sendCommand()">Send</button>
+            </div>
+        </div>
+        
+        <div class="server-info">
+            <div class="info-card">
+                <h3>Server Information</h3>
+                <div class="info-item">
+                    <span class="info-label">Server ID:</span>
+                    <span class="info-value">{{ server.id[:8] }}</span>
                 </div>
-                
-                <div class="setting-group">
-                    <h3 id="preferences">Preferences</h3>
-                    <div class="form-group">
-                        <label for="theme">Editor Theme</label>
-                        <select id="theme">
-                            <option value="light">Light</option>
-                            <option value="dark">Dark</option>
-                            <option value="monokai">Monokai</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="language">Default Language</label>
-                        <select id="language">
-                            <option value="python">Python</option>
-                            <option value="javascript">JavaScript</option>
-                            <option value="cpp">C++</option>
-                            <option value="php">PHP</option>
-                        </select>
-                    </div>
+                <div class="info-item">
+                    <span class="info-label">Status:</span>
+                    <span class="info-value">{{ server.status }}</span>
                 </div>
-                
-                <div class="setting-group">
-                    <h3 id="security">Security</h3>
-                    <button class="btn btn-danger btn-block">Delete Account</button>
+                <div class="info-item">
+                    <span class="info-label">Startup File:</span>
+                    <span class="info-value">{{ server.startup_file or 'Not set' }}</span>
                 </div>
-                
-                <button class="btn">Save Changes</button>
+                <div class="info-item">
+                    <span class="info-label">Files:</span>
+                    <span class="info-value">{{ server.files|length }}</span>
+                </div>
+            </div>
+            
+            <div class="info-card">
+                <h3>Quick Actions</h3>
+                <div class="info-item">
+                    <span class="info-label">View Files:</span>
+                    <a href="/server/{{ server.id }}/files" class="info-value" style="text-decoration: none; color: #3498db;">File Manager</a>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Server Settings:</span>
+                    <a href="/server/{{ server.id }}/settings" class="info-value" style="text-decoration: none; color: #3498db;">Configure</a>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Server Logs:</span>
+                    <span class="info-value">Enabled</span>
+                </div>
             </div>
         </div>
     </div>
@@ -597,7 +663,7 @@
             <ul class="mobile-nav-links">
                 <li><a href="/dashboard">Dashboard</a></li>
                 <li><a href="/servers">Servers</a></li>
-                <li><a href="/settings" class="active">Settings</a></li>
+                <li><a href="/settings">Settings</a></li>
             </ul>
             
             <div class="mobile-user-info">
@@ -626,6 +692,66 @@
                 !event.target.closest('.mobile-menu-btn')) {
                 toggleMobileNav();
             }
+        });
+        
+        function startServer() {
+            // In a real implementation, this would make an AJAX request to start the server
+            alert('Server would start in a real implementation');
+            
+            // Update button states
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('stopBtn').disabled = false;
+        }
+        
+        function stopServer() {
+            // In a real implementation, this would make an AJAX request to stop the server
+            alert('Server would stop in a real implementation');
+            
+            // Update button states
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+        }
+        
+        function clearConsole() {
+            document.getElementById('consoleOutput').innerHTML = '';
+        }
+        
+        function sendCommand() {
+            const input = document.getElementById('consoleInput');
+            const command = input.value.trim();
+            
+            if (command) {
+                // Add command to console
+                const consoleOutput = document.getElementById('consoleOutput');
+                const entry = document.createElement('div');
+                entry.className = 'log-entry';
+                entry.innerHTML = `<span class="log-timestamp">[now]</span> <span class="log-message">$ ${command}</span>`;
+                consoleOutput.appendChild(entry);
+                
+                // Add response (simulated)
+                const response = document.createElement('div');
+                response.className = 'log-entry';
+                response.innerHTML = `<span class="log-timestamp">[now]</span> <span class="log-message">Command executed: ${command}</span>`;
+                consoleOutput.appendChild(response);
+                
+                // Scroll to bottom
+                consoleOutput.scrollTop = consoleOutput.scrollHeight;
+                
+                // Clear input
+                input.value = '';
+            }
+        }
+        
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendCommand();
+            }
+        }
+        
+        // Auto-scroll to bottom of console
+        document.addEventListener('DOMContentLoaded', function() {
+            const consoleOutput = document.getElementById('consoleOutput');
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
         });
     </script>
 </body>
