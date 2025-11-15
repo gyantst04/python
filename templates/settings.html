@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Online Code Editor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .header {
+            background-color: #3498db;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #ddd;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .logout-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .logout-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        
+        .navigation {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-link {
+            text-decoration: none;
+            color: #3498db;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            background-color: #f4f4f9;
+        }
+        
+        .nav-link.active {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .settings-container {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .settings-sidebar {
+            flex: 1;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .settings-content {
+            flex: 3;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .setting-group {
+            margin-bottom: 30px;
+        }
+        
+        .setting-group h3 {
+            color: #3498db;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .btn {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-danger {
+            background-color: #e74c3c;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        .btn-block {
+            display: block;
+            text-align: center;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">Online Code Editor</div>
+        <div class="user-info">
+            <div class="user-avatar">{{ user.username[0].upper() }}</div>
+            <span>{{ user.username }}#{{ user.discriminator }}</span>
+            <button class="logout-btn" onclick="location.href='/logout'">Logout</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="navigation">
+            <div class="nav-links">
+                <a href="/dashboard" class="nav-link">Dashboard</a>
+                <a href="/settings" class="nav-link active">Settings</a>
+            </div>
+        </div>
+        
+        <div class="settings-container">
+            <div class="settings-sidebar">
+                <h3>Settings Menu</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 10px;"><a href="#profile" style="text-decoration: none; color: #3498db;">Profile Settings</a></li>
+                    <li style="margin-bottom: 10px;"><a href="#account" style="text-decoration: none; color: #3498db;">Account Settings</a></li>
+                    <li style="margin-bottom: 10px;"><a href="#preferences" style="text-decoration: none; color: #3498db;">Preferences</a></li>
+                    <li style="margin-bottom: 10px;"><a href="#security" style="text-decoration: none; color: #3498db;">Security</a></li>
+                </ul>
+            </div>
+            
+            <div class="settings-content">
+                <h2>Settings</h2>
+                
+                <div class="setting-group">
+                    <h3 id="profile">Profile Settings</h3>
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" value="{{ user.username }}" readonly>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="discriminator">Discriminator</label>
+                        <input type="text" id="discriminator" value="{{ user.discriminator }}" readonly>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="user-id">User ID</label>
+                        <input type="text" id="user-id" value="{{ user.id }}" readonly>
+                    </div>
+                </div>
+                
+                <div class="setting-group">
+                    <h3 id="account">Account Settings</h3>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" placeholder="Enter your email address">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="timezone">Timezone</label>
+                        <select id="timezone">
+                            <option value="utc">UTC</option>
+                            <option value="est">EST</option>
+                            <option value="pst">PST</option>
+                            <option value="cet">CET</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="setting-group">
+                    <h3 id="preferences">Preferences</h3>
+                    <div class="form-group">
+                        <label for="theme">Editor Theme</label>
+                        <select id="theme">
+                            <option value="light">Light</option>
+                            <option value="dark">Dark</option>
+                            <option value="monokai">Monokai</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="language">Default Language</label>
+                        <select id="language">
+                            <option value="python">Python</option>
+                            <option value="javascript">JavaScript</option>
+                            <option value="cpp">C++</option>
+                            <option value="php">PHP</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="setting-group">
+                    <h3 id="security">Security</h3>
+                    <button class="btn btn-danger btn-block">Delete Account</button>
+                </div>
+                
+                <button class="btn">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -100,10 +100,10 @@ def callback():
 def dashboard():
     return render_template('dashboard.html', user=session['user'])
 
-@app.route('/ide')
+@app.route('/settings')
 @login_required
-def ide():
-    return render_template('index.html')
+def settings():
+    return render_template('settings.html', user=session['user'])
 
 @app.route('/logout')
 def logout():
