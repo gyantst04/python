@@ -1211,9 +1211,17 @@
         }
         
         function closeEditFileModal() {
-            document.getElementById('editFileModal').classList.remove('active');
+            const modal = document.getElementById('editFileModal');
+            modal.classList.remove('active');
+            modal.classList.remove('fullscreen');
             document.body.style.overflow = 'auto';
             currentEditingFile = null;
+            
+            // Reset full screen button text
+            const btn = document.getElementById('fullScreenBtn');
+            if (btn) {
+                btn.innerHTML = '<span>□</span> Full Screen';
+            }
             
             // Hide output container when closing modal
             const outputContainer = document.getElementById('outputContainer');
@@ -1226,6 +1234,12 @@
             if (!currentEditingFile) return;
             
             const fileContent = document.getElementById('fileEditor').value;
+            
+            // Show saving indicator
+            const saveBtn = document.querySelector('.modal-footer .btn-primary');
+            const originalText = saveBtn.innerHTML;
+            saveBtn.innerHTML = 'Saving...';
+            saveBtn.disabled = true;
             
             // In a real implementation, this would make an AJAX request to save the file
             fetch(`/server/{{ server.id }}/files/edit`, {
@@ -1246,11 +1260,17 @@
                     location.reload(); // Refresh to show updated file list
                 } else {
                     alert('Error saving file: ' + data.message);
+                    // Reset button state on error
+                    saveBtn.innerHTML = originalText;
+                    saveBtn.disabled = false;
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
                 alert('Error saving file.');
+                // Reset button state on error
+                saveBtn.innerHTML = originalText;
+                saveBtn.disabled = false;
             });
         }
         
@@ -1444,10 +1464,10 @@
                         this.selectionStart = this.selectionEnd = start + 4;
                     }
                     
-                    // Handle F11 for full screen toggle
-                    if (e.key === 'F11' && (e.ctrlKey || e.metaKey)) {
+                    // Handle Ctrl+S or Cmd+S for save
+                    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
                         e.preventDefault();
-                        toggleFullScreen();
+                        saveFile();
                     }
                 });
             }
@@ -1455,9 +1475,21 @@
             // Also handle F11 globally when editor modal is open
             document.addEventListener('keydown', function(e) {
                 const modal = document.getElementById('editFileModal');
-                if (modal && modal.classList.contains('active') && e.key === 'F11') {
-                    e.preventDefault();
-                    toggleFullScreen();
+                if (modal && modal.classList.contains('active')) {
+                    // Handle F11 for full screen toggle
+                    if (e.key === 'F11') {
+                        e.preventDefault();
+                        toggleFullScreen();
+                    }
+                    // Handle Ctrl+S or Cmd+S for save
+                    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                        e.preventDefault();
+                        saveFile();
+                    }
+                    // Handle Escape key to close modal
+                    if (e.key === 'Escape') {
+                        closeEditFileModal();
+                    }
                 }
             });
         });
