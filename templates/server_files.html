@@ -12,10 +12,12 @@
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: #f8f9fa;
             min-height: 100vh;
             padding: 0;
+            font-size: 0.875rem;
+            line-height: 1.5;
         }
         
         .header {
@@ -108,36 +110,37 @@
         
         .navigation {
             background: white;
-            padding: 15px;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
             margin-bottom: 30px;
+            border: 1px solid #eaeaea;
         }
         
         .nav-links {
             display: flex;
-            gap: 10px;
+            gap: 0;
             flex-wrap: wrap;
         }
         
         .nav-link {
             text-decoration: none;
-            color: #3498db;
-            padding: 12px 25px;
-            border-radius: 8px;
+            color: #6c757d;
+            padding: 0.5rem 1rem;
             transition: all 0.3s ease;
             font-weight: 500;
-            border: 2px solid transparent;
+            border-radius: 0.25rem;
+            margin-right: 0.25rem;
         }
         
         .nav-link:hover {
+            color: #495057;
             background-color: #f8f9fa;
         }
         
         .nav-link.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: 2px solid transparent;
+            color: #495057;
+            background-color: #e9ecef;
         }
         
         .server-header {
@@ -145,10 +148,11 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 30px;
-            padding: 20px;
+            padding: 1rem 1.5rem;
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border-radius: 4px;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            border: 1px solid #eaeaea;
         }
         
         .server-title {
@@ -175,32 +179,34 @@
         
         .server-tabs {
             display: flex;
-            gap: 10px;
+            gap: 2px;
             margin-bottom: 30px;
             flex-wrap: wrap;
+            border-bottom: 1px solid #eaeaea;
         }
         
         .tab {
             text-decoration: none;
-            color: #3498db;
-            padding: 12px 25px;
-            border-radius: 8px;
+            color: #6c757d;
+            padding: 0.75rem 1.25rem;
+            border: 1px solid transparent;
+            border-bottom: 3px solid transparent;
             transition: all 0.3s ease;
             font-weight: 500;
-            border: 2px solid transparent;
-            background: white;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            background: transparent;
         }
         
         .tab:hover {
-            background-color: #f8f9fa;
+            color: #495057;
+            border-color: #e9ecef #e9ecef #dee2e6;
         }
         
         .tab.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: 2px solid transparent;
-            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+            color: #495057;
+            background-color: #fff;
+            border-color: #dee2e6 #dee2e6 #007bff;
+            border-bottom: 3px solid #007bff;
+            box-shadow: none;
         }
         
         .page-header {
@@ -208,92 +214,143 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid #eaeaea;
         }
         
-        .page-title {
-            color: #3498db;
-            margin: 0;
+        .breadcrumb {
+            font-size: 1rem;
+            color: #6c757d;
         }
         
-        .upload-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
+        .breadcrumb a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        
+        .btn {
+            display: inline-block;
+            font-weight: 400;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            user-select: none;
+            border: 1px solid transparent;
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            border-radius: 0.25rem;
+            transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
             cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s ease;
         }
         
-        .upload-btn:hover {
-            opacity: 0.9;
+        .btn-primary {
+            color: #fff;
+            background-color: #007bff;
+            border-color: #007bff;
         }
         
-        .files-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
+        .btn-primary:hover {
+            background-color: #0069d9;
+            border-color: #0062cc;
         }
         
-        .file-card {
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            line-height: 1.5;
+            border-radius: 0.2rem;
+        }
+        
+        .btn-info {
+            color: #fff;
+            background-color: #17a2b8;
+            border-color: #17a2b8;
+        }
+        
+        .btn-info:hover {
+            background-color: #138496;
+            border-color: #117a8b;
+        }
+        
+        .btn-warning {
+            color: #212529;
+            background-color: #ffc107;
+            border-color: #ffc107;
+        }
+        
+        .btn-warning:hover {
+            background-color: #e0a800;
+            border-color: #d39e00;
+        }
+        
+        .btn-danger {
+            color: #fff;
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+        }
+        
+        .file-manager {
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            padding: 20px;
-            transition: transform 0.3s ease;
+            border-radius: 4px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            border: 1px solid #eaeaea;
+            overflow: hidden;
         }
         
-        .file-card:hover {
-            transform: translateY(-3px);
+        .file-table-header {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #eaeaea;
+            font-weight: 600;
+            padding: 10px 15px;
+        }
+        
+        .file-table-row {
+            display: flex;
+            border-bottom: 1px solid #f0f0f0;
+            padding: 10px 15px;
+            align-items: center;
+        }
+        
+        .file-table-row:hover {
+            background: #f8f9fa;
+        }
+        
+        .file-table-cell {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+        }
+        
+        .file-table-cell:first-child {
+            flex: 2;
+        }
+        
+        .file-table-cell:last-child {
+            justify-content: flex-end;
         }
         
         .file-icon {
-            font-size: 2rem;
-            margin-bottom: 15px;
+            margin-right: 10px;
+            font-size: 1rem;
         }
         
         .file-name {
-            color: #333;
+            color: #495057;
             font-weight: 500;
-            margin-bottom: 5px;
-            word-break: break-all;
-        }
-        
-        .file-size {
-            color: #7f8c8d;
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-        }
-        
-        .file-actions {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .file-action-btn {
-            flex: 1;
-            padding: 8px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-        }
-        
-        .edit-btn {
-            background: #3498db;
-            color: white;
-        }
-        
-        .delete-btn {
-            background: #e74c3c;
-            color: white;
-        }
-        
-        .rename-btn {
-            background: #f39c12;
-            color: white;
         }
         
         .no-files {
@@ -334,14 +391,21 @@
         
         .modal-content {
             background: white;
-            border-radius: 12px;
-            padding: 30px;
+            border-radius: 4px;
             width: 90%;
             max-width: 500px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
             position: relative;
             max-height: 90vh;
             overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .editor-modal .modal-content {
+            max-width: 90%;
+            width: 95%;
+            height: 80vh;
         }
         
         .close-modal {
@@ -359,6 +423,95 @@
             color: #3498db;
             margin-bottom: 20px;
             text-align: center;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #eaeaea;
+            background: #f8f9fa;
+            border-radius: 4px 4px 0 0;
+        }
+        
+        .modal-header .modal-title {
+            margin: 0;
+            font-size: 1.25rem;
+            color: #495057;
+            text-align: left;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            padding: 1rem;
+            border-top: 1px solid #eaeaea;
+            background: #f8f9fa;
+            border-radius: 0 0 4px 4px;
+        }
+        
+        .form-control {
+            display: block;
+            width: 100%;
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            color: #495057;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+        
+        .form-control:focus {
+            color: #495057;
+            background-color: #fff;
+            border-color: #80bdff;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+        
+        .form-control-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            line-height: 1.5;
+            border-radius: 0.2rem;
+        }
+        
+        .btn-success {
+            color: #fff;
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        
+        .btn-success:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+        
+        .btn-secondary {
+            color: #fff;
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+        }
+        
+        .output-header {
+            padding: 0.5rem 1rem;
+            background: #e9ecef;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .output-header h5 {
+            margin: 0;
+            font-size: 1rem;
+            color: #495057;
         }
         
         .form-group {
@@ -443,9 +596,11 @@
         .editor-toolbar {
             display: flex;
             gap: 10px;
-            padding: 15px 0;
+            padding: 0.5rem 1rem;
             align-items: center;
             flex-wrap: wrap;
+            background: #f8f9fa;
+            border-bottom: 1px solid #eaeaea;
         }
         
         .editor-toolbar select {
@@ -478,10 +633,11 @@
         }
         
         .editor-container {
-            height: 400px;
-            border: 2px solid #e1e5eb;
-            border-radius: 8px;
+            flex: 1;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
             margin-bottom: 20px;
+            overflow: hidden;
         }
         
         #fileEditor {
@@ -498,11 +654,9 @@
         
         .output-container {
             margin-bottom: 20px;
-        }
-        
-        .output-container h3 {
-            color: #3498db;
-            margin-bottom: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+            overflow: hidden;
         }
         
         .output-wrapper {
@@ -515,7 +669,6 @@
             overflow-y: auto;
             white-space: pre-wrap;
             line-height: 1.4;
-            border-radius: 8px;
         }
         
         /* Mobile Navigation */
@@ -580,7 +733,7 @@
             padding: 15px;
             text-decoration: none;
             color: #333;
-            border-radius: 8px;
+            border-radius: 4px;
             font-weight: 500;
             font-size: 1.1rem;
             transition: background-color 0.3s ease;
@@ -680,17 +833,36 @@
                 justify-content: center;
             }
             
-            .file-actions {
+            .file-table-header, .file-table-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .file-table-cell {
+                width: 100%;
+                padding: 5px 0;
+            }
+            
+            .file-table-cell:last-child {
+                justify-content: flex-start;
+            }
+            
+            .modal-footer {
                 flex-direction: column;
             }
             
-            .modal-actions {
-                flex-direction: column;
+            .modal-footer .btn {
+                margin: 5px 0;
+                width: 100%;
             }
             
             .editor-toolbar {
                 flex-direction: column;
                 align-items: stretch;
+            }
+            
+            .editor-toolbar select, .editor-toolbar .btn {
+                margin: 5px 0;
             }
             
             .editor-container, .output-wrapper {
@@ -765,21 +937,30 @@
         </div>
         
         <div class="page-header">
-            <h2 class="page-title">File Management</h2>
-            <button class="upload-btn" onclick="openCreateFileModal()">+ Create File</button>
+            <div class="breadcrumb">
+                <a href="/server/{{ server.id }}/files">Files</a>
+            </div>
+            <button class="btn btn-primary" onclick="openCreateFileModal()">+ Create File</button>
         </div>
         
         {% if server.files %}
-        <div class="files-grid">
+        <div class="file-manager">
+            <div class="file-table-header">
+                <div class="file-table-cell">Name</div>
+                <div class="file-table-cell">Size</div>
+                <div class="file-table-cell">Actions</div>
+            </div>
             {% for file_name, file_data in server.files.items() %}
-            <div class="file-card">
-                <div class="file-icon">📄</div>
-                <div class="file-name">{{ file_name }}</div>
-                <div class="file-size">{{ file_data.content|length }} bytes</div>
-                <div class="file-actions">
-                    <button class="file-action-btn edit-btn" onclick="editFile('{{ file_name }}')">Edit</button>
-                    <button class="file-action-btn rename-btn" onclick="openRenameModal('{{ file_name }}')">Rename</button>
-                    <button class="file-action-btn delete-btn" onclick="openDeleteModal('{{ file_name }}')">Delete</button>
+            <div class="file-table-row">
+                <div class="file-table-cell">
+                    <span class="file-icon">📄</span>
+                    <span class="file-name">{{ file_name }}</span>
+                </div>
+                <div class="file-table-cell">{{ file_data.content|length }} bytes</div>
+                <div class="file-table-cell">
+                    <button class="btn btn-sm btn-info" onclick="editFile('{{ file_name }}')">Edit</button>
+                    <button class="btn btn-sm btn-warning" onclick="openRenameModal('{{ file_name }}')">Rename</button>
+                    <button class="btn btn-sm btn-danger" onclick="openDeleteModal('{{ file_name }}')">Delete</button>
                 </div>
             </div>
             {% endfor %}
@@ -788,7 +969,7 @@
         <div class="no-files">
             <h3>No Files Found</h3>
             <p>This server doesn't have any files yet. Create your first file to get started.</p>
-            <button class="upload-btn" onclick="openCreateFileModal()">+ Create File</button>
+            <button class="btn btn-primary" onclick="openCreateFileModal()">+ Create File</button>
         </div>
         {% endif %}
     </div>
@@ -818,17 +999,19 @@
     <!-- Edit File Modal -->
     <div class="modal editor-modal" id="editFileModal">
         <div class="modal-content">
-            <button class="close-modal" onclick="closeEditFileModal()">&times;</button>
-            <h2 class="modal-title">Edit File: <span id="editFileName"></span></h2>
+            <div class="modal-header">
+                <h4 class="modal-title">Editing File: <span id="editFileName"></span></h4>
+                <button class="close-modal" onclick="closeEditFileModal()">&times;</button>
+            </div>
             <div class="editor-toolbar">
-                <select id="editorLanguage" onchange="changeLanguage()">
+                <select id="editorLanguage" onchange="changeLanguage()" class="form-control form-control-sm">
                     <option value="text">Plain Text</option>
                     <option value="python">Python</option>
                     <option value="javascript">JavaScript</option>
                     <option value="html">HTML</option>
                     <option value="css">CSS</option>
                 </select>
-                <button class="toolbar-btn run-btn" onclick="runCode()">
+                <button class="btn btn-sm btn-success" onclick="runCode()">
                     <span>▶</span> Run
                 </button>
             </div>
@@ -836,12 +1019,14 @@
                 <textarea id="fileEditor" placeholder="Enter file content"></textarea>
             </div>
             <div class="output-container" id="outputContainer" style="display: none;">
-                <h3>Output:</h3>
+                <div class="output-header">
+                    <h5>Output:</h5>
+                </div>
                 <div class="output-wrapper" id="outputArea"></div>
             </div>
-            <div class="modal-actions">
-                <button type="button" class="modal-btn cancel-btn" onclick="closeEditFileModal()">Cancel</button>
-                <button type="button" class="modal-btn submit-btn" onclick="saveFile()">Save Changes</button>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeEditFileModal()">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveFile()">Save Changes</button>
             </div>
         </div>
     </div>
