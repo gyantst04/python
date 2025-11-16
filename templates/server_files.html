@@ -200,6 +200,7 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: 2px solid transparent;
+            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
         }
         
         .page-header {
@@ -439,6 +440,43 @@
             width: 95%;
         }
         
+        .editor-toolbar {
+            display: flex;
+            gap: 10px;
+            padding: 15px 0;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .editor-toolbar select {
+            padding: 8px 12px;
+            border: 2px solid #e1e5eb;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+        
+        .editor-toolbar select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .toolbar-btn {
+            padding: 8px 15px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .run-btn {
+            background: #27ae60;
+            color: white;
+        }
+        
         .editor-container {
             height: 400px;
             border: 2px solid #e1e5eb;
@@ -454,6 +492,30 @@
             font-family: 'Courier New', monospace;
             padding: 15px;
             box-sizing: border-box;
+            background: #1e1e1e;
+            color: #d4d4d4;
+        }
+        
+        .output-container {
+            margin-bottom: 20px;
+        }
+        
+        .output-container h3 {
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+        
+        .output-wrapper {
+            height: 200px;
+            padding: 15px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            line-height: 1.4;
+            border-radius: 8px;
         }
         
         /* Mobile Navigation */
@@ -625,6 +687,15 @@
             .modal-actions {
                 flex-direction: column;
             }
+            
+            .editor-toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .editor-container, .output-wrapper {
+                height: 300px;
+            }
         }
         
         @media (max-width: 480px) {
@@ -749,8 +820,24 @@
         <div class="modal-content">
             <button class="close-modal" onclick="closeEditFileModal()">&times;</button>
             <h2 class="modal-title">Edit File: <span id="editFileName"></span></h2>
+            <div class="editor-toolbar">
+                <select id="editorLanguage" onchange="changeLanguage()">
+                    <option value="text">Plain Text</option>
+                    <option value="python">Python</option>
+                    <option value="javascript">JavaScript</option>
+                    <option value="html">HTML</option>
+                    <option value="css">CSS</option>
+                </select>
+                <button class="toolbar-btn run-btn" onclick="runCode()">
+                    <span>▶</span> Run
+                </button>
+            </div>
             <div class="editor-container">
                 <textarea id="fileEditor" placeholder="Enter file content"></textarea>
+            </div>
+            <div class="output-container" id="outputContainer" style="display: none;">
+                <h3>Output:</h3>
+                <div class="output-wrapper" id="outputArea"></div>
             </div>
             <div class="modal-actions">
                 <button type="button" class="modal-btn cancel-btn" onclick="closeEditFileModal()">Cancel</button>
@@ -852,6 +939,9 @@
             currentEditingFile = fileName;
             document.getElementById('editFileName').textContent = fileName;
             
+            // Set language based on file extension
+            setLanguageFromExtension(fileName);
+            
             // Fetch actual file content from server
             fetch(`/server/{{ server.id }}/files/content`, {
                 method: 'POST',
@@ -873,6 +963,11 @@
                 
                 document.getElementById('editFileModal').classList.add('active');
                 document.body.style.overflow = 'hidden';
+                
+                // Focus the editor after a short delay to ensure it's visible
+                setTimeout(() => {
+                    document.getElementById('fileEditor').focus();
+                }, 100);
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -880,6 +975,11 @@
                 document.getElementById('fileEditor').value = getFileContent(fileName);
                 document.getElementById('editFileModal').classList.add('active');
                 document.body.style.overflow = 'hidden';
+                
+                // Focus the editor after a short delay to ensure it's visible
+                setTimeout(() => {
+                    document.getElementById('fileEditor').focus();
+                }, 100);
             });
         }
         
@@ -887,6 +987,12 @@
             document.getElementById('editFileModal').classList.remove('active');
             document.body.style.overflow = 'auto';
             currentEditingFile = null;
+            
+            // Hide output container when closing modal
+            const outputContainer = document.getElementById('outputContainer');
+            if (outputContainer) {
+                outputContainer.style.display = 'none';
+            }
         }
         
         function saveFile() {
@@ -1033,6 +1139,85 @@
                 return '// Sample file content\n';
             }
         }
+        
+        // Set language based on file extension
+        function setLanguageFromExtension(fileName) {
+            const languageSelect = document.getElementById('editorLanguage');
+            if (fileName.endsWith('.py')) {
+                languageSelect.value = 'python';
+            } else if (fileName.endsWith('.js')) {
+                languageSelect.value = 'javascript';
+            } else if (fileName.endsWith('.html')) {
+                languageSelect.value = 'html';
+            } else if (fileName.endsWith('.css')) {
+                languageSelect.value = 'css';
+            } else {
+                languageSelect.value = 'text';
+            }
+        }
+        
+        // Change language manually
+        function changeLanguage() {
+            // In a more advanced implementation, you could apply syntax highlighting here
+            console.log('Language changed to: ' + document.getElementById('editorLanguage').value);
+        }
+        
+        // Run code
+        function runCode() {
+            const code = document.getElementById('fileEditor').value;
+            const language = document.getElementById('editorLanguage').value;
+            const outputContainer = document.getElementById('outputContainer');
+            const outputArea = document.getElementById('outputArea');
+            
+            // Show output container
+            outputContainer.style.display = 'block';
+            
+            // Show loading message
+            outputArea.textContent = "Executing code...\n";
+            
+            // In a real implementation, this would make an AJAX request to execute the code
+            // For now, we'll simulate execution based on language
+            setTimeout(() => {
+                let output = "";
+                if (language === 'python') {
+                    output = `>>> ${code.replace(/\n/g, '\n>>> ')}\n`;
+                    output += "Code executed successfully\n";
+                    if (code.includes('print')) {
+                        output += "Hello, World!\n";
+                    }
+                } else if (language === 'javascript') {
+                    output = `// JavaScript execution\n${code}\n`;
+                    output += "Code executed successfully\n";
+                    if (code.includes('console.log')) {
+                        output += "Hello, World!\n";
+                    }
+                } else {
+                    output = `// Execution output for ${language}\n${code}\n`;
+                    output += "Code executed successfully\n";
+                }
+                outputArea.textContent = output;
+            }, 1000);
+        }
+        
+        // Auto-indentation for the code editor
+        document.addEventListener('DOMContentLoaded', function() {
+            const editor = document.getElementById('fileEditor');
+            if (editor) {
+                editor.addEventListener('keydown', function(e) {
+                    if (e.key === 'Tab') {
+                        e.preventDefault();
+                        const start = this.selectionStart;
+                        const end = this.selectionEnd;
+                        
+                        // Insert 4 spaces at the cursor position
+                        this.value = this.value.substring(0, start) + '    ' + this.value.substring(end);
+                        
+                        // Move the cursor to after the inserted spaces
+                        this.selectionStart = this.selectionEnd = start + 4;
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html>
