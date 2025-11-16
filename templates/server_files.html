@@ -408,6 +408,23 @@
             height: 80vh;
         }
         
+        .editor-modal.fullscreen .modal-content {
+            max-width: 100%;
+            width: 100%;
+            height: 100vh;
+            border-radius: 0;
+        }
+        
+        .editor-modal.fullscreen {
+            padding: 0;
+        }
+        
+        .editor-modal.fullscreen .modal-header,
+        .editor-modal.fullscreen .editor-toolbar,
+        .editor-modal.fullscreen .modal-footer {
+            border-radius: 0;
+        }
+        
         .close-modal {
             position: absolute;
             top: 15px;
@@ -640,6 +657,10 @@
             overflow: hidden;
         }
         
+        .editor-modal.fullscreen .editor-container {
+            flex: 1;
+        }
+        
         #fileEditor {
             width: 100%;
             height: 100%;
@@ -652,11 +673,20 @@
             color: #d4d4d4;
         }
         
+        .editor-modal.fullscreen #fileEditor {
+            flex: 1;
+        }
+        
         .output-container {
             margin-bottom: 20px;
             border: 1px solid #ced4da;
             border-radius: 0.25rem;
             overflow: hidden;
+        }
+        
+        .editor-modal.fullscreen .output-container {
+            flex: 1;
+            margin-bottom: 20px;
         }
         
         .output-wrapper {
@@ -669,6 +699,11 @@
             overflow-y: auto;
             white-space: pre-wrap;
             line-height: 1.4;
+        }
+        
+        .editor-modal.fullscreen .output-wrapper {
+            flex: 1;
+            height: auto;
         }
         
         /* Mobile Navigation */
@@ -868,6 +903,10 @@
             .editor-container, .output-wrapper {
                 height: 300px;
             }
+            
+            .editor-modal.fullscreen .modal-content {
+                height: 100vh;
+            }
         }
         
         @media (max-width: 480px) {
@@ -1013,6 +1052,9 @@
                 </select>
                 <button class="btn btn-sm btn-success" onclick="runCode()">
                     <span>▶</span> Run
+                </button>
+                <button class="btn btn-sm btn-info" onclick="toggleFullScreen()" id="fullScreenBtn">
+                    <span>□</span> Full Screen
                 </button>
             </div>
             <div class="editor-container">
@@ -1389,6 +1431,7 @@
             const editor = document.getElementById('fileEditor');
             if (editor) {
                 editor.addEventListener('keydown', function(e) {
+                    // Handle Tab key for indentation
                     if (e.key === 'Tab') {
                         e.preventDefault();
                         const start = this.selectionStart;
@@ -1400,9 +1443,63 @@
                         // Move the cursor to after the inserted spaces
                         this.selectionStart = this.selectionEnd = start + 4;
                     }
+                    
+                    // Handle F11 for full screen toggle
+                    if (e.key === 'F11' && (e.ctrlKey || e.metaKey)) {
+                        e.preventDefault();
+                        toggleFullScreen();
+                    }
                 });
             }
+            
+            // Also handle F11 globally when editor modal is open
+            document.addEventListener('keydown', function(e) {
+                const modal = document.getElementById('editFileModal');
+                if (modal && modal.classList.contains('active') && e.key === 'F11') {
+                    e.preventDefault();
+                    toggleFullScreen();
+                }
+            });
         });
+        
+        // Full screen functionality
+        function toggleFullScreen() {
+            const modal = document.getElementById('editFileModal');
+            const btn = document.getElementById('fullScreenBtn');
+            
+            if (modal.classList.contains('fullscreen')) {
+                // Exit full screen
+                modal.classList.remove('fullscreen');
+                btn.innerHTML = '<span>□</span> Full Screen';
+                document.body.style.overflow = 'hidden';
+            } else {
+                // Enter full screen
+                modal.classList.add('fullscreen');
+                btn.innerHTML = '<span>❐</span> Exit Full Screen';
+                document.body.style.overflow = 'hidden';
+            }
+        }
+        
+        // Close editor modal (updated to handle full screen)
+        function closeEditFileModal() {
+            const modal = document.getElementById('editFileModal');
+            modal.classList.remove('active');
+            modal.classList.remove('fullscreen');
+            document.body.style.overflow = 'auto';
+            currentEditingFile = null;
+            
+            // Reset full screen button text
+            const btn = document.getElementById('fullScreenBtn');
+            if (btn) {
+                btn.innerHTML = '<span>□</span> Full Screen';
+            }
+            
+            // Hide output container when closing modal
+            const outputContainer = document.getElementById('outputContainer');
+            if (outputContainer) {
+                outputContainer.style.display = 'none';
+            }
+        }
     </script>
 </body>
 </html>
